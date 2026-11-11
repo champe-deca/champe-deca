@@ -643,6 +643,129 @@ ul.drps li span{color:var(--ink-soft);font-size:.98rem}
 .btn.dlcb:hover{background:color-mix(in srgb,var(--g-dlc) 18%,transparent);filter:none}
 .goal-kicker{display:none}
 .goal .verb{margin-top:.2rem}
+
+/* ===== v9: flashcards, progress, exam mode ===== */
+.meter{display:block;height:.5rem;border-radius:999px;background:color-mix(in srgb,var(--ink) 10%,transparent);overflow:hidden;min-width:3rem}
+.meter i{display:block;height:100%;width:0;background:var(--mc,var(--g,var(--hl)));border-radius:999px;transition:width .4s var(--ease)}
+
+/* progress blocks */
+.prog{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.6rem;margin-top:1.25rem}
+.prog div{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:.6rem .75rem;display:flex;flex-direction:column;gap:.35rem;min-width:0}
+.prog dt{font-family:var(--ui);font-weight:500;font-size:.92rem;color:var(--ink-soft);line-height:1.15}
+.prog dd{margin:0;font-family:var(--display);font-weight:800;font-size:1.5rem;line-height:1;font-variant-numeric:tabular-nums}
+.prog dd small{font-family:var(--ui);font-weight:500;font-size:.9rem;color:var(--ink-soft)}
+.goal-prog{margin:-.5rem 0 1.5rem}
+.goal-prog h2{font-size:1.5rem}
+@media (max-width:700px){ .prog{grid-template-columns:repeat(2,minmax(0,1fr))} }
+
+.prog-home{padding-block:3rem 0}
+.prog-home-in{border:1px solid var(--rule);border-top:10px solid var(--hl);border-radius:14px;background:var(--sheet);box-shadow:var(--shadow);padding:clamp(1.2rem,3vw,2rem)}
+.prog-home h2{font-size:clamp(2rem,4vw,2.8rem)}
+.prog-home .lead{margin-top:.4rem;color:var(--ink-soft);max-width:62ch}
+.prog-rows{display:grid;gap:.5rem;margin-top:1.1rem}
+.prog-row{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:5rem minmax(0,1fr) auto;gap:.9rem;align-items:center;padding:.6rem .8rem;border:1px solid var(--rule);border-left:6px solid var(--c);border-radius:10px;background:var(--paper);transition:transform .2s var(--ease)}
+.prog-row:hover{transform:translateX(3px)}
+.prog-row:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+.prog-row b{font-family:var(--display);font-weight:900;font-size:1.6rem;line-height:1}
+.prog-row .meter{--mc:var(--c);height:.65rem}
+.prog-row span{font-family:var(--ui);font-weight:700;font-size:.95rem;color:var(--ink-soft);white-space:nowrap;font-variant-numeric:tabular-nums}
+.prog-row em{display:block;font-style:normal;font-family:var(--ui);font-size:.85rem;color:var(--ink-soft);margin-top:.25rem}
+.prog-reset{margin-top:1rem}
+.tile .tile-p{display:block;height:4px;border-radius:999px;background:rgba(20,35,75,.18);overflow:hidden;margin-top:.3rem}
+.tile .tile-p i{display:block;height:100%;background:var(--on-color)}
+@media (max-width:600px){ .prog-row{grid-template-columns:3.6rem minmax(0,1fr)} .prog-row span{grid-column:2} }
+
+/* done toggles */
+.done-btn{display:inline-flex;align-items:center;gap:.5rem}
+.done-btn[aria-pressed="true"]{background:var(--g);border-color:var(--g);color:var(--on-color)}
+.done-row{margin-top:2rem;display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+.concept-nav button.is-done span::after{content:" ✓";font-weight:700;color:var(--ink-soft)}
+.concept-nav button.is-done[aria-current="true"] span::after{color:var(--on-color)}
+.pi summary .pdone{font-family:var(--ui);font-weight:700;font-size:.85rem;background:var(--g);color:var(--on-color);padding:.05rem .5rem;border-radius:999px;margin-left:.5rem;white-space:nowrap}
+.pi summary .c{display:flex;align-items:center}
+.pi-done-row{margin-top:1rem}
+
+/* flashcards */
+.fc-wrap{max-width:46rem}
+.fc-top{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:1rem}
+.fc-top .sp{flex:1}
+.fc-bar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.8rem;align-items:center;font-family:var(--ui);font-weight:700;font-size:.95rem;color:var(--ink-soft);margin-bottom:.8rem;font-variant-numeric:tabular-nums}
+.fc{display:block;width:100%;box-sizing:border-box;cursor:pointer;min-height:17rem;background:var(--sheet);border:1px solid var(--rule);border-top:8px solid var(--g);border-radius:16px;box-shadow:var(--shadow);padding:clamp(1.2rem,4vw,2.2rem);text-align:left;color:var(--ink);display:flex;flex-direction:column;gap:.8rem}
+.fc:focus-visible{outline:3px solid var(--g);outline-offset:3px}
+.fc.back{border-top-color:var(--c)}
+.fc.flip{animation:fc-flip .32s var(--ease)}
+@keyframes fc-flip{0%{transform:perspective(900px) rotateY(0)}50%{transform:perspective(900px) rotateY(90deg)}100%{transform:perspective(900px) rotateY(0)}}
+.fc-tag{align-self:flex-start;font-family:var(--ui);font-weight:700;font-size:.9rem;background:color-mix(in srgb,var(--g) 40%,var(--sheet));color:var(--ink);padding:.1rem .6rem;border-radius:999px}
+.fc.back .fc-tag{background:color-mix(in srgb,var(--c) 40%,var(--sheet))}
+.fc-q{font-family:var(--display);font-weight:800;font-size:clamp(1.9rem,4.5vw,2.8rem);line-height:1.05;margin:auto 0;text-wrap:balance}
+.fc .guide{max-width:none;font-size:1.15rem}
+.fc .guide p{max-width:none}
+.fc-hint{font-family:var(--ui);font-size:.95rem;color:var(--ink-soft)}
+.fc-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem;margin-top:1rem}
+.fc-actions .btn{text-align:center}
+.btn.again{background:transparent;color:var(--ink);border-color:#F87171}
+.btn.again:hover{background:color-mix(in srgb,#F87171 18%,transparent);filter:none}
+.btn.got{background:var(--g);border-color:var(--g);color:var(--on-color)}
+.fc-end{background:var(--sheet);border:1px solid var(--rule);border-top:8px solid var(--g);border-radius:16px;padding:clamp(1.2rem,4vw,2rem)}
+.fc-end h3{font-size:2.2rem}
+.fc-end p{margin-top:.5rem;color:var(--ink-soft)}
+@media (max-width:600px){ .fc-actions{grid-template-columns:repeat(2,minmax(0,1fr))} .fc-actions .flipb{grid-column:1/-1;grid-row:1} }
+
+/* exams list */
+.guide p.golink .take{font:inherit;cursor:pointer;display:inline-block;font-family:var(--ui);font-weight:700;font-size:1rem;background:var(--g);color:var(--on-color);border:1.5px solid var(--g);border-radius:999px;padding:.2rem .8rem;margin-right:.4rem}
+.guide p.golink .take:hover{filter:brightness(1.05);transform:translateY(-1px)}
+.exam-best{display:inline-block;margin-left:.5rem;font-family:var(--ui);font-weight:700;font-size:.92rem;color:var(--ink-soft)}
+
+/* exam dialog */
+dialog.exam{border:0;padding:0;margin:0;width:100vw;height:100dvh;max-width:none;max-height:none;background:var(--paper);color:var(--ink)}
+dialog.exam::backdrop{background:rgba(10,16,38,.6)}
+.ex{display:flex;flex-direction:column;height:100%}
+.ex-head{display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:center;padding:.7rem clamp(16px,3vw,28px);background:var(--hero-bg);color:var(--hero-fg)}
+.ex-head h2{font-size:clamp(1.2rem,2.4vw,1.6rem);flex:1;min-width:12rem;line-height:1.1}
+.ex-head h2 small{display:block;font-family:var(--ui);font-weight:500;font-size:.9rem;color:var(--hero-soft);margin-bottom:.15rem}
+.ex-time{font-family:var(--display);font-weight:900;font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
+.ex-time.over{color:#FCA5A5}
+.ex-head .btn{background:transparent;color:var(--hero-fg);border-color:var(--hero-fg);font-size:1rem;padding:.35rem .8rem}
+.ex-head .btn.go-on{background:var(--g-test);border-color:var(--g-test);color:var(--on-color)}
+.ex-body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 22rem}
+.ex-view{position:relative;border-right:1px solid var(--rule);background:#525659;min-height:0}
+.ex-view iframe{width:100%;height:100%;border:0;display:block}
+.ex-sheet{overflow-y:auto;padding:1rem 1rem 3rem;min-height:0}
+.ex-sheet .note{margin-bottom:.6rem}
+.ex-count{font-family:var(--ui);font-weight:700;color:var(--ink-soft);display:flex;gap:.6rem;align-items:center;margin-bottom:.8rem}
+.ex-count .meter{flex:1;--mc:var(--g-test)}
+.ex-mobile-pdf{display:none}
+.bub{display:grid;grid-template-columns:2.4rem repeat(4,minmax(0,1fr));gap:.3rem;align-items:center;padding:.2rem 0;border-bottom:1px dashed var(--rule)}
+.bub > b{font-family:var(--ui);font-weight:700;font-size:.95rem;color:var(--ink-soft);text-align:right;padding-right:.3rem;font-variant-numeric:tabular-nums}
+.bub button{font:inherit;font-family:var(--ui);font-weight:700;font-size:.95rem;cursor:pointer;height:2rem;border-radius:999px;border:1.5px solid var(--rule);background:var(--sheet);color:var(--ink)}
+.bub button:hover{border-color:var(--ink)}
+.bub button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.ex-panel{max-width:46rem;margin:0 auto;padding:clamp(1.25rem,4vw,2.5rem) clamp(16px,4vw,32px) 4rem;overflow-y:auto;width:100%;box-sizing:border-box}
+.ex-scroll{flex:1;min-height:0;overflow-y:auto}
+.ex-panel h3{font-size:clamp(1.8rem,4vw,2.4rem)}
+.ex-panel > p{margin-top:.6rem;color:var(--ink-soft)}
+.ex-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1.4rem}
+.ex-form label{display:flex;flex-direction:column;gap:.3rem;font-family:var(--ui);font-weight:700}
+.ex-form input,.ex-form select,.ex-panel textarea{font:inherit;font-size:1.05rem;padding:.55rem .7rem;border:1px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink)}
+.ex-panel textarea{width:100%;box-sizing:border-box;min-height:5rem;margin-top:.5rem;font-family:ui-monospace,Menlo,monospace;font-size:1rem}
+.grade-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(8.5rem,1fr));gap:.4rem;margin-top:1rem}
+.gq{font:inherit;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:.4rem;padding:.4rem .6rem;border-radius:8px;border:1.5px solid color-mix(in srgb,#22C55E 55%,var(--rule));background:color-mix(in srgb,#22C55E 12%,var(--sheet));color:var(--ink);font-family:var(--ui);font-weight:700;font-variant-numeric:tabular-nums}
+.gq.wrong{border-color:color-mix(in srgb,#EF4444 60%,var(--rule));background:color-mix(in srgb,#EF4444 14%,var(--sheet))}
+.gq i{font-style:normal;color:var(--ink-soft);font-weight:500}
+.gq::after{content:"✓";color:#16A34A}
+.gq.wrong::after{content:"✗";color:#DC2626}
+.ex-score{font-family:var(--display);font-weight:900;font-size:clamp(4rem,12vw,7rem);line-height:1;margin-top:.6rem;font-variant-numeric:tabular-nums}
+.ex-score small{font-size:.4em;color:var(--ink-soft)}
+.missed{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.6rem}
+.missed span{font-family:var(--ui);font-weight:700;background:color-mix(in srgb,#EF4444 14%,var(--sheet));border-radius:999px;padding:.1rem .6rem;font-variant-numeric:tabular-nums}
+.hist{margin-top:1.4rem}
+.hist li{font-family:var(--ui);font-variant-numeric:tabular-nums}
+@media (max-width:900px){
+  .ex-body{grid-template-columns:minmax(0,1fr)}
+  .ex-view{display:none}
+  .ex-mobile-pdf{display:block;margin-bottom:.8rem}
+  .ex-form{grid-template-columns:minmax(0,1fr)}
+}
 </style>
 
 <header class="top">
@@ -674,6 +797,7 @@ ul.drps li span{color:var(--ink-soft);font-size:.98rem}
         <div><div class="n">3</div><h3>Get to work</h3><p>Only the material for that goal, from the real guide.</p></div>
       </div>
     </div>
+    <div class="wrap prog-home" id="prog-home" hidden></div>
     <div class="wrap dlc-home" id="dlc-home">
       <div class="dlc-home-in">
         <p class="kick">New for 2026–27</p>
@@ -727,6 +851,7 @@ ul.drps li span{color:var(--ink-soft);font-size:.98rem}
         <h1 tabindex="-1" id="goal-h"></h1>
         <p>Pick what you're working on today. You can switch any time.</p>
       </div>
+      <div class="goal-prog" id="goal-prog"></div>
       <div class="goals" id="goals"></div>
     </div>
   </section>
@@ -744,6 +869,8 @@ ul.drps li span{color:var(--ink-soft);font-size:.98rem}
     </div>
   </section>
 </main>
+
+<dialog class="exam" id="exam" aria-label="Practice exam"></dialog>
 
 <footer>
   <div class="wrap">
@@ -783,7 +910,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":
 /* tabs available for each goal */
 function tabsFor(e, goal){
   if(goal==="study"){
-    const t=[{id:"concepts", label:"Core concepts", count:e.nConcepts}];
+    const t=[{id:"concepts", label:"Core concepts", count:e.nConcepts}, {id:"flash", label:"Flashcards", count:cardsFor(e).length}];
     if(e.market) t.push({id:"market", label:"Market data"});
     if(e.realworld) t.push({id:"realworld", label:"Real world"});
     if(e.resources && e.resources.trim()) t.push({id:"resources", label:"More resources"});
@@ -820,6 +947,7 @@ function go(view, opts={}){
     if(view==="event") renderEvent();
     if(view==="goal") renderGoal();
     if(view==="prep") renderPrep();
+    if(view==="home") renderHomeProgress();
     renderSteps(); setHash();
     if(!opts.silent){ window.scrollTo(0,0); const h=document.querySelector(`[data-view="${view}"] h1`); h && h.focus({preventScroll:true}) }
   };
@@ -886,14 +1014,15 @@ function renderEvent(){
     </dl>
     <p class="exam">Takes the ${esc(e.exam)}.</p>
     <p class="dlc-line"><b>2026–27 DLC area${e.dlc.length>1?"s":""}:</b> ${e.dlc.map(x=>`<span class="chip-c">${esc(x.ia)}</span>`).join(" ")}</p>
+    ${progHTML(e)}
     <dl class="rounds">${e.rounds.map(([c,n])=>`<div><dt>${c}</dt><dd>${esc(n)}</dd></div>`).join("")}</dl>
     <div class="actions"><button class="btn" type="button" data-nav="goal">Continue with ${e.code}</button></div>`;
 }
 
 /* ---------- step 2 ---------- */
 function goalItems(e,g){
-  if(g==="study") return [`${e.nConcepts} core concepts, each with videos`, e.market&&"Live market and economic data", e.realworld&&"Real-world careers and case studies"].filter(Boolean);
-  if(g==="test") return [`${e.nExams||"Past"} exam links, newest first`, ...e.reference.filter(r=>!/playbook/i.test(r.title)).map(r=>r.title.replace(/,.*$/,"")), "A plan for the week before"].filter(Boolean);
+  if(g==="study") return [`${e.nConcepts} core concepts, each with videos`, `${cardsFor(e).length} flashcards for PIs and key terms`, e.market&&"Live market and economic data", e.realworld&&"Real-world careers and case studies"].filter(Boolean);
+  if(g==="test") return [`${e.nExams||"Past"} past exams you can take right here, timed and graded`, ...e.reference.filter(r=>!/playbook/i.test(r.title)).map(r=>r.title.replace(/,.*$/,"")), "A plan for the week before"].filter(Boolean);
   if(g==="dlc") return [`2026–27 area${e.dlc.length>1?"s":""}: ${e.dlc.map(x=>x.ia).join(" and ")}`, `${e.dlc.reduce((a,x)=>a+x.pis.length,0)} PIs ranked by how often districts used them`, "A six-part write-up for every PI", `${e.dlc.length} concept page${e.dlc.length>1?"s":""}, one per area`];
   return ["Step-by-step role-play strategy", `${e.nPIs} judge-ready PI responses`, `${e.nRoleplays||"Past"} role-plays, newest first`, e.rubric&&"2026–27 rubric changes", "Practice clock"].filter(Boolean);
 }
@@ -901,6 +1030,7 @@ function renderGoal(){
   const e=E();
   $("#crumb-event").textContent=e.code;
   $("#goal-h").textContent=`What are you working on for ${e.code}?`;
+  const gs=evStats(e); $("#goal-prog").innerHTML = gs.pct||gs.tries ? `<h2>Your ${e.code} progress: ${gs.pct}%</h2>${progHTML(e)}` : "";
   $("#goals").innerHTML = GOALS.map(g=>`
     <button class="goal" type="button" data-goal="${g.id}" style="--g:${gvar(g.id)}">
       <span class="goal-kicker">${g.n}</span>
@@ -947,15 +1077,16 @@ function renderPanel(){
   if(t==="concepts") return renderConcepts();
   if(t==="pis") return renderPIs();
   if(t==="clock") return renderClock();
+  if(t==="flash") return renderFlash();
   if(state.goal==="dlc") return renderDLC(t);
   let html="";
   if(t==="market") html=`<div class="guide">${e.market.html}</div>`;
   else if(t==="realworld") html=`<div class="guide">${e.realworld.html}</div>`;
   else if(t==="resources") html=`<div class="guide">${e.resources}</div>`;
-  else if(t==="exams") html=`<p class="panel-intro">Every exam link from the ${e.code} guide, newest first. Take one under a timer, score it, then match each miss to a concept in Study.</p><div class="guide">${e.exams}</div>`;
+  else if(t==="exams") html=`<p class="panel-intro">Every exam from the ${e.code} guide, newest first. Hit Take exam to answer on a bubble sheet next to the PDF with a timer, then grade it against the key. Scores save to your progress.</p><div class="guide">${e.exams}</div>`;
   else if(t.startsWith("ref")) html=`<div class="guide">${e.reference[+t.slice(3)].html}</div>`;
   else if(t==="plan") html=`<div class="guide"><h3>The week before the exam</h3><ul>
-      <li>Take the newest practice exam first under a 60-minute timer, then score it.</li>
+      <li>Take the newest practice exam first with Take exam in Past exams, under the 60-minute timer, then grade it.</li>
       <li>Sort every miss by topic and reread the matching core concept in Study.</li>
       <li>Take the next-oldest exam to check that the gap closed.</li>
       ${e.reference.length?`<li>Review the ${esc(e.reference.map(r=>r.title.replace(/,.*$/,"")).join(" and "))} until you can do it without looking.</li>`:""}
@@ -965,6 +1096,7 @@ function renderPanel(){
   else if(t==="strategy") html=`<div class="strategy">${e.strategyDeck}</div>`;
   else if(t==="pidocs") html=`<div class="guide">${e.pidocs}</div>`;
   P.innerHTML=html;
+  if(t==="exams") enhanceExams();
 }
 
 function renderConcepts(){
@@ -972,7 +1104,7 @@ function renderConcepts(){
   const i=e.concepts.indexOf(c);
   $("#panel").innerHTML = `
     <div class="concept-layout">
-      <ol class="concept-nav" aria-label="Concepts">${e.concepts.map((x,j)=>`<li><button type="button" data-concept="${j}" aria-current="${j===i}"><b>${x.n}</b><span>${esc(x.title)}</span></button></li>`).join("")}</ol>
+      <ol class="concept-nav" aria-label="Concepts">${e.concepts.map((x,j)=>`<li><button type="button" data-concept="${j}" aria-current="${j===i}" class="${pev(e.code).c.includes(j)?"is-done":""}"><b>${x.n}</b><span>${esc(x.title)}</span></button></li>`).join("")}</ol>
       <div>
         <label class="concept-select"><span class="note">Concept</span><select id="concept-select">${e.concepts.map((x,j)=>`<option value="${j}" ${j===i?"selected":""}>${x.n}. ${esc(x.title)}</option>`).join("")}</select></label>
         <article>
@@ -980,6 +1112,7 @@ function renderConcepts(){
           <h2 class="concept-title" tabindex="-1" id="concept-h">${esc(c.title)}</h2>
           <div class="guide">${c.html}</div>
           ${c.videos?`<div class="watch"><h3>Watch</h3><div class="guide">${c.videos}</div></div>`:""}
+          <div class="done-row"><button class="btn ghost done-btn" type="button" data-cdone="${i}" aria-pressed="${pev(e.code).c.includes(i)}">${pev(e.code).c.includes(i)?"✓ Done":"Mark this concept done"}</button></div>
           <div class="pager">
             ${i>0?`<button class="btn ghost" type="button" data-concept="${i-1}">Previous: ${esc(e.concepts[i-1].title)}</button>`:"<span></span>"}
             ${i<e.concepts.length-1?`<button class="btn" type="button" data-concept="${i+1}">Next: ${esc(e.concepts[i+1].title)}</button>`:`<button class="btn" type="button" data-go-goal="test">Done with concepts. Go to Test</button>`}
@@ -1003,8 +1136,8 @@ function renderPIs(){
   let lastGroup=null, items="";
   list.forEach(p=>{
     if(state.piGroup==="all" && p.group && p.group!==lastGroup){ items+=`<h2 class="pi-group">${esc(p.group)}</h2>`; lastGroup=p.group }
-    items+=`<details class="pi"><summary><span class="t">${esc(p.title)}</span><span class="c">${esc(p.code)}</span></summary>
-      <div class="pi-body">${p.steps.map(s=>`<div class="step${/judge/i.test(s.label)?" judge":""}"><h4><span>${esc(s.label)}</span></h4><div class="guide">${s.html}</div></div>`).join("")}</div></details>`;
+    items+=`<details class="pi"><summary><span class="t">${esc(p.title)}</span><span class="c">${esc(p.code)}${pev(e.code).p.includes(piKey(p))?'<span class="pdone">✓ Got it</span>':""}</span></summary>
+      <div class="pi-body">${p.steps.map(s=>`<div class="step${/judge/i.test(s.label)?" judge":""}"><h4><span>${esc(s.label)}</span></h4><div class="guide">${s.html}</div></div>`).join("")}<div class="pi-done-row"><button class="btn ghost done-btn" type="button" data-pdone="${e.pis.indexOf(p)}" aria-pressed="${pev(e.code).p.includes(piKey(p))}">${pev(e.code).p.includes(piKey(p))?"✓ I can say this one":"I can say this one"}</button></div></div></details>`;
   });
   $("#panel").innerHTML = `
     <p class="panel-intro">Read the PI, say your answer out loud, then open it to compare. The judge-ready response is the part to practice until it's yours.</p>
@@ -1114,6 +1247,262 @@ document.addEventListener("click", ev=>{
   const c=ev.target.closest("[data-copy]");
   if(c){ const txt=c.dataset.copy; const done=()=>{ c.textContent="Copied"; setTimeout(()=>c.textContent="Copy",1600) };
     try{ navigator.clipboard.writeText(txt).then(done, ()=>{ const r=document.createRange(); r.selectNodeContents(c.previousElementSibling); const s=getSelection(); s.removeAllRanges(); s.addRange(r); c.textContent="Selected, press Ctrl+C" }) }catch(_){ c.textContent="Select the text to copy" } }
+});
+
+
+/* ---------- progress (saved in this browser only) ---------- */
+const PKEY="champeDeca.progress.v1", XKEY="champeDeca.exam.v1";
+const load=k=>{ try{ return JSON.parse(localStorage.getItem(k)) }catch(_){ return null } };
+const store=(k,v)=>{ try{ v==null?localStorage.removeItem(k):localStorage.setItem(k,JSON.stringify(v)) }catch(_){} };
+let PROG=load(PKEY)||{};
+function psave(){ store(PKEY,PROG) }
+function pev(code){ const o=PROG[code]||(PROG[code]={}); o.c||=[]; o.p||=[]; o.k||=[]; o.x||={}; return o }
+function ptoggle(arr,v,force){ const i=arr.indexOf(v), on=force===undefined?i<0:force; if(on&&i<0) arr.push(v); if(!on&&i>=0) arr.splice(i,1); psave(); return on }
+const piKey=p=>p.code+"|"+p.title;
+function evStats(e){
+  const o=PROG[e.code]||{}, cards=cardsFor(e), ids=new Set(cards.map(c=>c.id)), piK=new Set(e.pis.map(piKey));
+  const c=(o.c||[]).filter(i=>i<e.concepts.length).length, p=(o.p||[]).filter(k=>piK.has(k)).length, k=(o.k||[]).filter(id=>ids.has(id)).length;
+  let best=null, tries=0;
+  Object.values(o.x||{}).forEach(h=>h.forEach(a=>{ tries++; const pct=a.s/a.n; if(best===null||pct>best) best=pct }));
+  const parts=[c/(e.concepts.length||1), p/(e.pis.length||1), k/(cards.length||1)];
+  return {c,nc:e.concepts.length,p,np:e.pis.length,k,nk:cards.length,best,tries,pct:Math.round(parts.reduce((a,b)=>a+b,0)/3*100)};
+}
+const meter=(f,col)=>`<span class="meter"${col?` style="--mc:${col}"`:""}><i style="width:${Math.round(Math.min(1,f)*100)}%"></i></span>`;
+function progHTML(e){
+  const s=evStats(e);
+  return `<dl class="prog">
+    <div><dt>Concepts done</dt><dd>${s.c}<small> / ${s.nc}</small></dd>${meter(s.c/s.nc,"var(--g-study)")}</div>
+    <div><dt>PIs you can say</dt><dd>${s.p}<small> / ${s.np}</small></dd>${meter(s.p/s.np,"var(--g-roleplay)")}</div>
+    <div><dt>Flashcards known</dt><dd>${s.k}<small> / ${s.nk}</small></dd>${meter(s.nk?s.k/s.nk:0,"var(--g-study)")}</div>
+    <div><dt>Best exam</dt><dd>${s.best===null?"—":Math.round(s.best*100)+"<small>%</small>"}</dd>${meter(s.best||0,"var(--g-test)")}</div>
+  </dl>`;
+}
+function renderHomeProgress(){
+  const box=$("#prog-home");
+  const started=EVENTS.filter(e=>{ const s=evStats(e); return s.c||s.p||s.k||s.tries });
+  document.querySelectorAll("#quick .tile").forEach(t=>{ const e=EVENTS[+t.dataset.ev], s=evStats(e);
+    let bar=t.querySelector(".tile-p"); if(!s.pct){ bar&&bar.remove(); return }
+    if(!bar){ bar=document.createElement("span"); bar.className="tile-p"; bar.innerHTML="<i></i>"; t.appendChild(bar) }
+    bar.firstChild.style.width=s.pct+"%"; t.title=`${s.pct}% done`; });
+  if(!started.length){ box.hidden=true; return }
+  box.hidden=false;
+  box.innerHTML=`<div class="prog-home-in">
+    <h2>Your progress</h2>
+    <p class="lead">Saved on this device. Concepts you mark done, PIs you can say, flashcards you know, and your exam scores.</p>
+    <div class="prog-rows">${started.map(e=>{ const s=evStats(e);
+      return `<button class="prog-row" type="button" data-prog-ev="${byCode[e.code]}" style="--c:${cvar(e.code)}"><b>${e.code}</b>
+        <div>${meter(s.pct/100)}<em>${s.c}/${s.nc} concepts · ${s.p}/${s.np} PIs · ${s.k}/${s.nk} cards${s.tries?` · best exam ${Math.round(s.best*100)}%`:""}</em></div>
+        <span>${s.pct}%</span></button>` }).join("")}</div>
+    <div class="prog-reset"><button class="linkish" type="button" id="prog-reset">Reset all progress</button></div>
+  </div>`;
+}
+document.addEventListener("click", ev=>{
+  const r=ev.target.closest("[data-prog-ev]"); if(r){ go("goal",{ev:+r.dataset.progEv}); return }
+  if(ev.target.closest("#prog-reset")){ if(confirm("Erase all saved progress, flashcards and exam scores on this device?")){ PROG={}; psave(); store(XKEY,null); renderHomeProgress() } return }
+  const c=ev.target.closest("[data-cdone]");
+  if(c){ const e=E(), i=+c.dataset.cdone, on=ptoggle(pev(e.code).c,i);
+    c.setAttribute("aria-pressed",on); c.textContent=on?"✓ Done":"Mark this concept done";
+    const nb=document.querySelector(`.concept-nav [data-concept="${i}"]`); nb&&nb.classList.toggle("is-done",on); return }
+  const p=ev.target.closest("[data-pdone]");
+  if(p){ const e=E(), pi=e.pis[+p.dataset.pdone], on=ptoggle(pev(e.code).p,piKey(pi));
+    p.setAttribute("aria-pressed",on); p.textContent=on?"✓ I can say this one":"I can say this one";
+    const sm=p.closest("details").querySelector("summary .c"); const b=sm.querySelector(".pdone");
+    if(on&&!b) sm.insertAdjacentHTML("beforeend",'<span class="pdone">✓ Got it</span>'); if(!on&&b) b.remove(); return }
+});
+
+/* ---------- flashcards ---------- */
+const cardCache={};
+function cardsFor(e){
+  if(cardCache[e.code]) return cardCache[e.code];
+  const out=[], tmp=document.createElement("div"), seen=new Set();
+  e.pis.forEach(p=>{ const s=p.steps.find(s=>/defin/i.test(s.label))||p.steps[0]; if(!s) return;
+    out.push({id:"pi:"+piKey(p), kind:"PI", tag:"PI · "+p.code, front:p.title, back:s.html}) });
+  e.concepts.forEach((c,ci)=>{ tmp.innerHTML=c.html;
+    tmp.querySelectorAll("table").forEach(t=>{ if(t.querySelector("thead,th")) return;
+      t.querySelectorAll("tr").forEach(r=>{ const d=r.querySelectorAll("td"); if(d.length!==2) return;
+        const term=d[0].textContent.trim(), def=d[1].innerHTML.trim();
+        if(!term||!d[1].textContent.trim()||term.length>90||seen.has(term.toLowerCase())) return; seen.add(term.toLowerCase());
+        out.push({id:"t:"+term, kind:"Term", tag:`Key term · ${c.title}`, front:term, back:`<p>${def}</p>`}) }) }) });
+  return cardCache[e.code]=out;
+}
+let FS=null;
+function startFlash(filter,shuffle){
+  const e=E(), all=cardsFor(e), known=new Set(pev(e.code).k);
+  let order=all.map((_,i)=>i);
+  if(filter==="PI"||filter==="Term") order=order.filter(i=>all[i].kind===filter);
+  if(filter==="learning") order=order.filter(i=>!known.has(all[i].id));
+  if(shuffle) for(let i=order.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [order[i],order[j]]=[order[j],order[i]] }
+  FS={code:e.code,filter,shuffle,order,i:0,back:false,got:0,again:0};
+}
+function renderFlash(anim){
+  const e=E(); if(!FS||FS.code!==e.code) startFlash("all",false);
+  const all=cardsFor(e), known=new Set(pev(e.code).k), nK=all.filter(c=>known.has(c.id)).length;
+  const nT=all.filter(c=>c.kind==="Term").length;
+  const chips=[["all",`All ${all.length}`],["PI",`PIs ${all.length-nT}`],nT&&["Term",`Key terms ${nT}`],["learning",`Still learning ${all.length-nK}`]].filter(Boolean);
+  let body;
+  if(!FS.order.length) body=`<div class="fc-end"><h3>${FS.filter==="learning"?"You know every card.":"No cards here."}</h3><p>${FS.filter==="learning"?"Nothing left in Still learning. Run the full deck again to keep it fresh, or go take a practice exam.":"Pick another set above."}</p><div class="actions"><button class="btn" type="button" data-fdeck="all">Run all ${all.length}</button><button class="btn ghost" type="button" data-go-goal="test">Go to Test</button></div></div>`;
+  else if(FS.i>=FS.order.length) body=`<div class="fc-end"><h3>Round done.</h3><p>Got it: <b>${FS.got}</b> · Still learning: <b>${FS.again}</b>. You know ${nK} of ${all.length} ${e.code} cards.</p><div class="actions">${all.length-nK?`<button class="btn got" type="button" data-fdeck="learning">Drill the ${all.length-nK} still learning</button>`:""}<button class="btn ghost" type="button" data-fdeck="${FS.filter}" data-fshuffle="1">Shuffle and go again</button></div></div>`;
+  else{
+    const c=all[FS.order[FS.i]], isK=known.has(c.id);
+    body=`<div class="fc-bar"><span>Card ${FS.i+1} of ${FS.order.length}</span>${meter(FS.i/FS.order.length)}<span>${nK}/${all.length} known</span></div>
+      <div class="fc ${FS.back?"back":""} ${anim?"flip":""}" role="button" tabindex="0" id="fc" aria-label="${FS.back?"Answer side. Tap to see the question":"Question side. Tap to flip"}">
+        <span class="fc-tag">${esc(c.tag)}${isK?" · known":""}</span>
+        ${FS.back?`<div class="guide">${c.back}</div>`:`<p class="fc-q">${esc(c.front)}</p><span class="fc-hint">${c.kind==="PI"?"Explain it out loud like you would to a judge, then flip.":"Define it out loud, then flip."}</span>`}
+      </div>
+      <div class="fc-actions"><button class="btn again" type="button" data-fc="again">Still learning</button><button class="btn ghost flipb" type="button" data-fc="flip">${FS.back?"Show question":"Flip"}</button><button class="btn got" type="button" data-fc="got">Got it</button></div>
+      <p class="note" style="margin-top:.8rem">Keyboard: Space flips, ← still learning, → got it.</p>`;
+  }
+  $("#panel").innerHTML=`<div class="fc-wrap">
+    <p class="panel-intro">Every ${e.code} PI and key term as a flashcard. Mark the ones you know, then drill the rest until the Still learning pile is empty. Saved on this device.</p>
+    <div class="fc-top">${chips.map(([k,l])=>`<button class="chip" type="button" data-fdeck="${k}" aria-pressed="${FS.filter===k}">${l}</button>`).join("")}<span class="sp"></span><button class="chip" type="button" data-fdeck="${FS.filter}" data-fshuffle="1">Shuffle</button></div>
+    ${body}</div>`;
+}
+function fcAct(a){
+  if(!FS||FS.i>=FS.order.length) return;
+  const e=E(), c=cardsFor(e)[FS.order[FS.i]];
+  if(a==="flip"){ FS.back=!FS.back; return renderFlash(true) }
+  ptoggle(pev(e.code).k,c.id,a==="got"); a==="got"?FS.got++:FS.again++;
+  FS.i++; FS.back=false; renderFlash(); const f=$("#fc"); f&&f.focus({preventScroll:true});
+}
+document.addEventListener("click", ev=>{
+  if(state.tab!=="flash") return;
+  const d=ev.target.closest("[data-fdeck]"); if(d){ startFlash(d.dataset.fdeck,!!d.dataset.fshuffle||!!(FS&&FS.shuffle)); return renderFlash() }
+  const b=ev.target.closest("[data-fc]"); if(b) return fcAct(b.dataset.fc);
+  if(ev.target.closest("#fc")) fcAct("flip");
+});
+document.addEventListener("keydown", ev=>{
+  if(state.view!=="prep"||state.tab!=="flash"||$("#exam").open||/INPUT|SELECT|TEXTAREA/.test(ev.target.tagName)||ev.metaKey||ev.ctrlKey||ev.altKey) return;
+  if(ev.key===" "||ev.key==="Enter"&&ev.target.id==="fc"){ ev.preventDefault(); fcAct("flip") }
+  else if(ev.key==="ArrowRight"){ ev.preventDefault(); fcAct("got") }
+  else if(ev.key==="ArrowLeft"){ ev.preventDefault(); fcAct("again") }
+});
+
+/* ---------- exam mode ---------- */
+let EXLIST=[], XS=null, xTimer=null;
+function examTitle(a){
+  const block=[]; let n=a.closest("p");
+  while((n=n.previousElementSibling) && n.tagName==="P" && !n.classList.contains("golink")) block.unshift(n);
+  const top=block.find(p=>p.classList.contains("entry"))||block[0];
+  return top?top.textContent.trim():"Practice exam";
+}
+function bestLine(code,url){
+  const h=(pev(code).x[url]||[]); if(!h.length) return "";
+  const b=h.reduce((m,a)=>a.s/a.n>m.s/m.n?a:m);
+  return `<span class="exam-best">Best ${b.s}/${b.n} · ${h.length} ${h.length>1?"tries":"try"}</span>`;
+}
+function enhanceExams(){
+  const e=E(); EXLIST=[];
+  $("#panel").querySelectorAll('p.golink a.go[href*=".pdf" i]').forEach(a=>{
+    const i=EXLIST.push({url:a.href,title:examTitle(a)})-1;
+    a.textContent="Open PDF";
+    a.insertAdjacentHTML("beforebegin",`<button class="take" type="button" data-take="${i}">Take exam</button>`);
+    a.insertAdjacentHTML("afterend",bestLine(e.code,a.href));
+  });
+}
+document.addEventListener("click", ev=>{ const t=ev.target.closest("[data-take]"); if(t) openExam(EXLIST[+t.dataset.take]) });
+function openExam(x){
+  const e=E(), saved=load(XKEY);
+  XS = saved&&saved.url===x.url&&saved.phase!=="done" ? saved : {url:x.url,title:x.title,code:e.code,n:100,limit:60,ans:{},phase:"setup",wrong:[]};
+  XS.title=x.title; xsave(); $("#exam").showModal(); renderExam();
+}
+function xsave(){ store(XKEY,XS) }
+function closeExam(){ clearInterval(xTimer); xTimer=null; $("#exam").close(); if(state.tab==="exams") renderPanel() }
+const fmtT=s=>{ s=Math.max(0,Math.round(s)); const h=Math.floor(s/3600), m=Math.floor(s%3600/60), x=s%60; return (h?h+":"+String(m).padStart(2,"0"):m)+":"+String(x).padStart(2,"0") };
+function elapsed(){ return ((XS.paused?XS.paused:Date.now())-XS.start)/1000 }
+function tick(){
+  const el=$("#ex-time"); if(!el) return;
+  if(XS.limit){ const left=XS.limit*60-elapsed(); el.textContent=left>0?fmtT(left):"Time's up"; el.classList.toggle("over",left<=0) }
+  else el.textContent=fmtT(elapsed());
+}
+function answered(){ return Object.keys(XS.ans).filter(k=>+k<=XS.n).length }
+function head(right){ return `<div class="ex-head"><h2><small>${esc(XS.code)} practice exam</small>${esc(XS.title)}</h2>${right}<button class="btn" type="button" data-x="close">${XS.phase==="take"?"Save & close":"Close"}</button></div>` }
+function renderExam(){
+  clearInterval(xTimer); xTimer=null;
+  const D=$("#exam"), e=EVENTS[byCode[XS.code]]||E();
+  if(XS.phase==="setup"){
+    D.innerHTML=`<div class="ex">${head("")}<div class="ex-scroll"><div class="ex-panel">
+      <h3>Take it like test day.</h3>
+      <p>The official exam opens on the left with an answer sheet on the right. Bubble your answers as you go. When you finish, grade it against the answer key at the back of the PDF, and your score saves to your ${esc(XS.code)} progress.</p>
+      <p>Have scratch paper and a calculator ready. Don't scroll to the answer key until you're done.</p>
+      <div class="ex-form">
+        <label>Number of questions<input type="number" id="x-n" min="1" max="200" value="${XS.n}"></label>
+        <label>Timer<select id="x-limit"><option value="60" ${XS.limit==60?"selected":""}>60 minutes</option><option value="90" ${XS.limit==90?"selected":""}>90 minutes</option><option value="0" ${!XS.limit?"selected":""}>No timer, just track time</option></select></label>
+      </div>
+      <div class="actions"><button class="btn big hl" type="button" data-x="start">Start exam</button><a class="linkish" href="${XS.url}" target="_blank" rel="noopener">Preview the PDF</a></div>
+    </div></div></div>`;
+    $("#x-n").focus(); return;
+  }
+  if(XS.phase==="take"){
+    const n=XS.n, a=answered();
+    let rows=""; for(let q=1;q<=n;q++) rows+=`<div class="bub" role="radiogroup" aria-label="Question ${q}"><b>${q}</b>${"ABCD".split("").map(L=>`<button type="button" data-q="${q}" data-l="${L}" aria-pressed="${XS.ans[q]===L}" aria-label="${q}${L}">${L}</button>`).join("")}</div>`;
+    D.innerHTML=`<div class="ex">${head(`<span class="ex-time" id="ex-time" role="timer"></span><button class="btn go-on" type="button" data-x="finish">Finish & grade</button>`)}
+      <div class="ex-body">
+        <div class="ex-view"><iframe src="${XS.url}#view=FitH" title="Exam PDF"></iframe></div>
+        <div class="ex-sheet">
+          <a class="btn ex-mobile-pdf" href="${XS.url}" target="_blank" rel="noopener">Open the exam PDF</a>
+          <div class="ex-count"><span id="x-count">${a}/${n}</span>${meter(a/n,"var(--g-test)")}</div>
+          <p class="note">Tap a letter to bubble it, tap again to erase. Your answers save as you go. PDF not showing? <a href="${XS.url}" target="_blank" rel="noopener">Open it in a new tab</a>.</p>
+          ${rows}
+        </div>
+      </div></div>`;
+    tick(); xTimer=setInterval(tick,1000); return;
+  }
+  if(XS.phase==="grade"){
+    const n=XS.n, wrong=new Set(XS.wrong);
+    let list=""; for(let q=1;q<=n;q++) list+=`<button type="button" class="gq ${wrong.has(q)?"wrong":""}" data-g="${q}" aria-pressed="${wrong.has(q)}">${q}<i>${XS.ans[q]||"blank"}</i></button>`;
+    D.innerHTML=`<div class="ex">${head(`<a class="btn" href="${XS.url}" target="_blank" rel="noopener">Open answer key</a>`)}<div class="ex-scroll"><div class="ex-panel">
+      <h3>Grade it.</h3>
+      <p>The answer key is at the back of the PDF. Fastest way: type the key below and it grades itself. Or tap every question you got wrong. Blank answers start out marked wrong.</p>
+      <label class="note" for="x-key"><b>Type the key</b>: letters in order (ABDC...) or numbered (1 A, 2 C...).</label>
+      <textarea id="x-key" spellcheck="false" placeholder="ADBCC ABDDA ...">${esc(XS.key||"")}</textarea>
+      <div class="actions"><button class="btn" type="button" data-x="key">Grade from key</button><span class="note" id="x-keynote"></span></div>
+      <p style="margin-top:1.6rem"><b id="x-live">${n-wrong.size}/${n} right</b>. Tap a box to switch it between right and wrong.</p>
+      <div class="grade-list">${list}</div>
+      <div class="actions"><button class="btn big hl" type="button" data-x="save">Save my score</button><button class="linkish" type="button" data-x="back">Back to the answer sheet</button></div>
+    </div></div></div>`; return;
+  }
+  // done
+  const last=(pev(XS.code).x[XS.url]||[]).slice(-1)[0]||{s:0,n:XS.n,m:[],sec:0}, hist=pev(XS.code).x[XS.url]||[];
+  D.innerHTML=`<div class="ex">${head("")}<div class="ex-scroll"><div class="ex-panel">
+    <h3>Saved to your ${esc(XS.code)} progress.</h3>
+    <div class="ex-score">${last.s}<small> / ${last.n} · ${Math.round(last.s/last.n*100)}%</small></div>
+    <p>Time used: ${fmtT(last.sec)}.</p>
+    ${last.m.length?`<p style="margin-top:1rem"><b>Missed (${last.m.length}):</b> look up each one in the answer key's rationale, then reread the matching concept in Study.</p><div class="missed">${last.m.map(q=>`<span>${q}</span>`).join("")}</div>`:"<p>Perfect score.</p>"}
+    ${hist.length>1?`<ol class="hist">${hist.map(h=>`<li>${new Date(h.t).toLocaleDateString()}: ${h.s}/${h.n} (${Math.round(h.s/h.n*100)}%)</li>`).join("")}</ol>`:""}
+    <div class="actions"><button class="btn" type="button" data-x="close">Back to exams</button><button class="btn ghost" type="button" data-x="retake">Retake</button><button class="btn ghost" type="button" data-x="study">Study ${esc(XS.code)} concepts</button></div>
+  </div></div></div>`;
+}
+function parseKey(txt){
+  const out={}; let m, numbered=false;
+  const re=/(\d{1,3})\s*[.):-]?\s*([A-Da-d])\b/g;
+  while((m=re.exec(txt))){ numbered=true; out[+m[1]]=m[2].toUpperCase() }
+  if(!numbered) (txt.match(/[A-Da-d]/g)||[]).forEach((L,i)=>out[i+1]=L.toUpperCase());
+  return out;
+}
+$("#exam").addEventListener("cancel", ev=>{ ev.preventDefault(); closeExam() });
+$("#exam").addEventListener("click", ev=>{
+  const q=ev.target.closest("[data-q]");
+  if(q){ const n=+q.dataset.q, L=q.dataset.l; XS.ans[n]===L?delete XS.ans[n]:XS.ans[n]=L; xsave();
+    q.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",XS.ans[n]===b.dataset.l));
+    const a=answered(); $("#x-count").textContent=`${a}/${XS.n}`; $(".ex-count .meter i").style.width=Math.round(a/XS.n*100)+"%"; return }
+  const g=ev.target.closest("[data-g]");
+  if(g){ const n=+g.dataset.g, w=new Set(XS.wrong); w.has(n)?w.delete(n):w.add(n); XS.wrong=[...w]; xsave();
+    g.classList.toggle("wrong",w.has(n)); g.setAttribute("aria-pressed",w.has(n)); $("#x-live").textContent=`${XS.n-w.size}/${XS.n} right`; return }
+  const b=ev.target.closest("[data-x]"); if(!b) return;
+  const x=b.dataset.x;
+  if(x==="close"){ if(XS.phase==="done") store(XKEY,null); return closeExam() }
+  if(x==="start"){ XS.n=Math.max(1,Math.min(200,+$("#x-n").value||100)); XS.limit=+$("#x-limit").value; XS.start=Date.now(); XS.ans={}; XS.wrong=[]; XS.paused=null; XS.phase="take"; xsave(); return renderExam() }
+  if(x==="finish"){ const a=answered(); if(a<XS.n&&!confirm(`You've answered ${a} of ${XS.n}. Finish and grade anyway?`)) return;
+    XS.paused=Date.now(); XS.phase="grade"; XS.wrong=[]; for(let q=1;q<=XS.n;q++) if(!XS.ans[q]) XS.wrong.push(q); xsave(); return renderExam() }
+  if(x==="back"){ if(XS.paused){ XS.start+=Date.now()-XS.paused; XS.paused=null } XS.phase="take"; xsave(); return renderExam() }
+  if(x==="key"){ XS.key=$("#x-key").value; const k=parseKey(XS.key), have=Object.keys(k).filter(q=>+q<=XS.n).length;
+    if(!have){ $("#x-keynote").textContent="I couldn't find any A–D answers in that."; return }
+    XS.wrong=[]; for(let q=1;q<=XS.n;q++) if(!XS.ans[q]||(k[q]&&k[q]!==XS.ans[q])) XS.wrong.push(q); xsave(); renderExam();
+    $("#x-keynote").textContent= have<XS.n?`Key covers ${have} of ${XS.n} questions. Check the rest by hand.`:"Graded from your key."; return }
+  if(x==="save"){ const o=pev(XS.code); (o.x[XS.url] ||= []).push({t:Date.now(), s:XS.n-XS.wrong.length, n:XS.n, m:[...XS.wrong].sort((a,b)=>a-b), sec:Math.round(elapsed())}); psave();
+    XS.phase="done"; xsave(); return renderExam() }
+  if(x==="retake"){ XS.phase="setup"; XS.ans={}; XS.wrong=[]; XS.key=""; xsave(); return renderExam() }
+  if(x==="study"){ store(XKEY,null); closeExam(); go("prep",{ev:byCode[XS.code],goal:"study",tab:"concepts",concept:0}) }
 });
 
 /* ---------- boot ---------- */
