@@ -817,6 +817,21 @@ a.ia-row:hover{border-color:var(--ink)}
 .weak-box h3{font-size:1.7rem}
 .weak-box .note{margin:.2rem 0 .7rem}
 @media (max-width:600px){ .ia-row{grid-template-columns:minmax(0,1fr) 3.2rem} .ia-row .meter{grid-column:1/-1;grid-row:2} }
+/* flashcard detail + round report */
+.fc-qsmall{font-family:var(--ui);font-weight:700;font-size:1.05rem;color:var(--ink-soft);margin:0}
+.fc-detail{margin-top:1rem;display:grid;gap:.5rem}
+.fc-more{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:0 1rem}
+.fc-more > summary{cursor:pointer;font-family:var(--ui);font-weight:700;padding:.65rem 0;color:var(--ink)}
+.fc-more[open] > summary{border-bottom:1px dashed var(--rule)}
+.fc-more > .guide{padding:.6rem 0 .9rem;font-size:1.02rem}
+.fc-links{margin-top:.2rem}
+.miss-item .fc-more{margin-top:.5rem}
+.miss-item .guide{margin-top:.4rem;max-width:none}
+.miss-item .fc-front{font-family:var(--display);font-weight:800;font-size:1.3rem;line-height:1.15}
+.fc-kind{font-family:var(--ui);font-size:.85rem;font-weight:700;color:var(--ink-soft)}
+.fc-end.report .ex-score{font-size:clamp(3rem,9vw,5rem)}
+.fc-end.report .rp-h{font-family:var(--display);font-weight:800;font-size:1.6rem;margin:2rem 0 .6rem}
+.fc-end.report .actions{margin-top:2rem}
 </style>
 </head>
 <body>
@@ -1398,27 +1413,57 @@ document.addEventListener("click", ev=>{
 
 /* ---------- flashcards ---------- */
 const cardCache={};
+const stepHTML=(p,re)=>{ const s=p.steps.find(s=>re.test(s.label)); return s?s.html:"" };
 function cardsFor(e){
   if(cardCache[e.code]) return cardCache[e.code];
   const out=[], tmp=document.createElement("div"), seen=new Set();
-  e.pis.forEach(p=>{ const s=p.steps.find(s=>/defin/i.test(s.label))||p.steps[0]; if(!s) return;
-    out.push({id:"pi:"+piKey(p), kind:"PI", tag:"PI · "+p.code, front:p.title, back:s.html}) });
+  e.pis.forEach((p,pi)=>{ const def=stepHTML(p,/defin/i)||(p.steps[0]&&p.steps[0].html); if(!def) return;
+    const pre=(p.code||"").split(":")[0], grp=p.group||(pre?iaName(pre):"Performance indicators");
+    out.push({id:"pi:"+piKey(p), kind:"PI", tag:`PI · ${p.code}`, grp, code:p.code, pi, front:p.title, back:def,
+      more:[["Why it matters",stepHTML(p,/why/i)],["Business example",stepHTML(p,/example/i)],["Judge-ready response",stepHTML(p,/judge/i)]].filter(x=>x[1])}) });
   e.concepts.forEach((c,ci)=>{ tmp.innerHTML=c.html;
     tmp.querySelectorAll("table").forEach(t=>{ if(t.querySelector("thead,th")) return;
       t.querySelectorAll("tr").forEach(r=>{ const d=r.querySelectorAll("td"); if(d.length!==2) return;
         const term=d[0].textContent.trim(), def=d[1].innerHTML.trim();
         if(!term||!d[1].textContent.trim()||term.length>90||seen.has(term.toLowerCase())) return; seen.add(term.toLowerCase());
-        out.push({id:"t:"+term, kind:"Term", tag:`Key term · ${c.title}`, front:term, back:`<p>${def}</p>`}) }) }) });
+        out.push({id:"t:"+term, kind:"Term", tag:`Key term · Concept ${c.n}`, grp:c.title, ci, front:term, back:`<p>${def}</p>`, more:[]}) }) }) });
   return cardCache[e.code]=out;
 }
 let FS=null;
-function startFlash(filter,shuffle){
+function startFlash(filter,shuffle,order){
   const e=E(), all=cardsFor(e), known=new Set(pev(e.code).k);
-  let order=all.map((_,i)=>i);
-  if(filter==="PI"||filter==="Term") order=order.filter(i=>all[i].kind===filter);
-  if(filter==="learning") order=order.filter(i=>!known.has(all[i].id));
+  if(!order){ order=all.map((_,i)=>i);
+    if(filter==="PI"||filter==="Term") order=order.filter(i=>all[i].kind===filter);
+    if(filter==="learning") order=order.filter(i=>!known.has(all[i].id)); }
   if(shuffle) for(let i=order.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [order[i],order[j]]=[order[j],order[i]] }
-  FS={code:e.code,filter,shuffle,order,i:0,back:false,got:0,again:0};
+  FS={code:e.code,filter,shuffle,order,i:0,back:false,got:0,again:0,res:[]};
+}
+const missCount=(code,id)=>(pev(code).fm||{})[id]||0;
+function cardAnswer(c,open){
+  return `<div class="guide">${c.back}</div>
+    ${c.more.map(([l,h],i)=>`<details class="fc-more" ${open&&i===0?"open":""}><summary>${l}</summary><div class="guide">${h}</div></details>`).join("")}
+    <div class="fc-links">${c.kind==="PI"?`<button class="linkish" type="button" data-pi-jump="${c.pi}">Open the full PI response</button>`:`<button class="linkish" type="button" data-fc-concept="${c.ci}">Open the concept: ${esc(c.grp)}</button>`}</div>`;
+}
+function roundReport(e,all){
+  const res=FS.res, n=res.length, got=res.filter(r=>r.r==="got").length, missed=res.filter(r=>r.r==="again").map(r=>all[r.i]);
+  const groups={}; res.forEach(r=>{ const c=all[r.i]; const g=(groups[c.grp] ||= {got:0,t:0,miss:[]}); g.t++; r.r==="got"?g.got++:g.miss.push(c) });
+  const rows=Object.entries(groups).map(([g,x])=>({g,...x})).sort((a,b)=>b.miss.length-a.miss.length||a.got/a.t-b.got/b.t);
+  const focus=rows.filter(x=>x.miss.length).slice(0,3);
+  const repeat=missed.filter(c=>missCount(e.code,c.id)>1);
+  const gid=g=>"fg-"+btoa(unescape(encodeURIComponent(g))).replace(/[^a-z0-9]/gi,"").slice(0,24);
+  return `<div class="fc-end report">
+    <h3>Round done.</h3>
+    <div class="ex-score">${got}<small> / ${n} got it · ${n?Math.round(got/n*100):0}%</small></div>
+    <p>${missed.length?`${missed.length} still learning. Their full answers are below, grouped by area.`:"You got every card in this round."}</p>
+    ${focus.length?`<div class="focus"><b>Focus next:</b> ${focus.map(x=>`<a href="#${gid(x.g)}" data-fc-goto>${esc(x.g)}</a> (${x.miss.length} of ${x.t})`).join(", ")}.</div>`:""}
+    ${repeat.length?`<div class="focus repeat"><b>Missed again:</b> ${repeat.length} card${repeat.length>1?"s":""} you've marked Still learning in an earlier round too: ${repeat.slice(0,6).map(c=>esc(c.front)).join(", ")}${repeat.length>6?"…":""}.</div>`:""}
+    ${rows.length>1?`<h4 class="rp-h">By area</h4><div class="ia-rows">${rows.map(x=>`<a class="ia-row ${x.got/x.t<.7?"weak":""}" href="#${gid(x.g)}" data-fc-goto><b>${esc(x.g)}</b>${meter(x.got/x.t)}<span>${x.got}/${x.t}</span></a>`).join("")}</div>`:""}
+    ${missed.length?`<h4 class="rp-h">What you're still learning</h4><p class="note">Read each answer out loud, then the judge-ready response, so the next round sticks.</p>
+      ${rows.filter(x=>x.miss.length).map((x,gi)=>`<details class="ia-group" id="${gid(x.g)}" ${gi<2?"open":""}><summary><b>${esc(x.g)}</b><span>${x.miss.length} to review</span></summary>
+        ${x.miss.map(c=>{ const k=missCount(e.code,c.id); return `<article class="miss-item"><header><b class="fc-front">${esc(c.front)}</b>${c.code?`<code>${esc(c.code)}</code>`:`<span class="fc-kind">Key term</span>`}${k>1?`<span class="again">missed ${k}×</span>`:""}</header>${cardAnswer(c,false)}</article>` }).join("")}
+      </details>`).join("")}`:""}
+    <div class="actions">${missed.length?`<button class="btn got" type="button" data-fdeck="round">Drill these ${missed.length} again</button>`:""}<button class="btn ghost" type="button" data-fdeck="learning">All still learning</button><button class="btn ghost" type="button" data-fdeck="${FS.filter}" data-fshuffle="1">Shuffle and go again</button></div>
+  </div>`;
 }
 function renderFlash(anim){
   const e=E(); if(!FS||FS.code!==e.code) startFlash("all",false);
@@ -1427,37 +1472,48 @@ function renderFlash(anim){
   const chips=[["all",`All ${all.length}`],["PI",`PIs ${all.length-nT}`],nT&&["Term",`Key terms ${nT}`],["learning",`Still learning ${all.length-nK}`]].filter(Boolean);
   let body;
   if(!FS.order.length) body=`<div class="fc-end"><h3>${FS.filter==="learning"?"You know every card.":"No cards here."}</h3><p>${FS.filter==="learning"?"Nothing left in Still learning. Run the full deck again to keep it fresh, or go take a practice exam.":"Pick another set above."}</p><div class="actions"><button class="btn" type="button" data-fdeck="all">Run all ${all.length}</button><button class="btn ghost" type="button" data-go-goal="test">Go to Test</button></div></div>`;
-  else if(FS.i>=FS.order.length) body=`<div class="fc-end"><h3>Round done.</h3><p>Got it: <b>${FS.got}</b> · Still learning: <b>${FS.again}</b>. You know ${nK} of ${all.length} ${e.code} cards.</p><div class="actions">${all.length-nK?`<button class="btn got" type="button" data-fdeck="learning">Drill the ${all.length-nK} still learning</button>`:""}<button class="btn ghost" type="button" data-fdeck="${FS.filter}" data-fshuffle="1">Shuffle and go again</button></div></div>`;
+  else if(FS.i>=FS.order.length) body=roundReport(e,all);
   else{
-    const c=all[FS.order[FS.i]], isK=known.has(c.id);
+    const c=all[FS.order[FS.i]], isK=known.has(c.id), k=missCount(e.code,c.id);
     body=`<div class="fc-bar"><span>Card ${FS.i+1} of ${FS.order.length}</span>${meter(FS.i/FS.order.length)}<span>${nK}/${all.length} known</span></div>
       <div class="fc ${FS.back?"back":""} ${anim?"flip":""}" role="button" tabindex="0" id="fc" aria-label="${FS.back?"Answer side. Tap to see the question":"Question side. Tap to flip"}">
-        <span class="fc-tag">${esc(c.tag)}${isK?" · known":""}</span>
-        ${FS.back?`<div class="guide">${c.back}</div>`:`<p class="fc-q">${esc(c.front)}</p><span class="fc-hint">${c.kind==="PI"?"Explain it out loud like you would to a judge, then flip.":"Define it out loud, then flip."}</span>`}
+        <span class="fc-tag">${esc(c.tag)} · ${esc(c.grp)}${isK?" · known":""}${k?` · missed ${k}×`:""}</span>
+        ${FS.back?`<p class="fc-qsmall">${esc(c.front)}</p><div class="guide">${c.back}</div>`:`<p class="fc-q">${esc(c.front)}</p><span class="fc-hint">${c.kind==="PI"?"Explain it out loud like you would to a judge, then flip.":"Define it out loud, then flip."}</span>`}
       </div>
       <div class="fc-actions"><button class="btn again" type="button" data-fc="again">Still learning</button><button class="btn ghost flipb" type="button" data-fc="flip">${FS.back?"Show question":"Flip"}</button><button class="btn got" type="button" data-fc="got">Got it</button></div>
-      <p class="note" style="margin-top:.8rem">Keyboard: Space flips, ← still learning, → got it.</p>`;
+      ${FS.back&&(c.more.length||c.kind==="Term")?`<div class="fc-detail">${c.more.map(([l,h],i)=>`<details class="fc-more" ${i===0?"open":""}><summary>${l}</summary><div class="guide">${h}</div></details>`).join("")}<div class="fc-links">${c.kind==="PI"?`<button class="linkish" type="button" data-pi-jump="${c.pi}">Open the full PI response</button>`:`<button class="linkish" type="button" data-fc-concept="${c.ci}">Open the concept: ${esc(c.grp)}</button>`}</div></div>`:""}
+      <p class="note" style="margin-top:.8rem">Keyboard: Space flips, ← still learning, → got it. A report on what you missed comes at the end of the round.</p>`;
   }
   $("#panel").innerHTML=`<div class="fc-wrap">
-    <p class="panel-intro">Every ${e.code} PI and key term as a flashcard. Mark the ones you know, then drill the rest until the Still learning pile is empty. Saved on this device.</p>
-    <div class="fc-top">${chips.map(([k,l])=>`<button class="chip" type="button" data-fdeck="${k}" aria-pressed="${FS.filter===k}">${l}</button>`).join("")}<span class="sp"></span><button class="chip" type="button" data-fdeck="${FS.filter}" data-fshuffle="1">Shuffle</button></div>
+    <p class="panel-intro">Every ${e.code} PI and key term as a flashcard. Flip for the answer plus why it matters and the judge-ready response. Finish a round to get a report on what you're still learning. Saved on this device.</p>
+    <div class="fc-top">${chips.map(([k,l])=>`<button class="chip" type="button" data-fdeck="${k}" aria-pressed="${FS.filter===k}">${l}</button>`).join("")}<span class="sp"></span><button class="chip" type="button" data-fdeck="${FS.filter==="round"?"all":FS.filter}" data-fshuffle="1">Shuffle</button></div>
     ${body}</div>`;
 }
 function fcAct(a){
   if(!FS||FS.i>=FS.order.length) return;
   const e=E(), c=cardsFor(e)[FS.order[FS.i]];
   if(a==="flip"){ FS.back=!FS.back; return renderFlash(true) }
-  ptoggle(pev(e.code).k,c.id,a==="got"); a==="got"?FS.got++:FS.again++;
-  FS.i++; FS.back=false; renderFlash(); const f=$("#fc"); f&&f.focus({preventScroll:true});
+  const o=pev(e.code); ptoggle(o.k,c.id,a==="got");
+  if(a==="again"){ o.fm ||= {}; o.fm[c.id]=(o.fm[c.id]||0)+1; psave() }
+  a==="got"?FS.got++:FS.again++; FS.res.push({i:FS.order[FS.i], r:a});
+  FS.i++; FS.back=false; renderFlash();
+  if(FS.i>=FS.order.length){ const w=$(".fc-wrap"); w&&w.scrollIntoView({behavior:reduceMotion?"auto":"smooth",block:"start"}) }
+  else { const f=$("#fc"); f&&f.focus({preventScroll:true}) }
 }
 document.addEventListener("click", ev=>{
   if(state.tab!=="flash") return;
-  const d=ev.target.closest("[data-fdeck]"); if(d){ startFlash(d.dataset.fdeck,!!d.dataset.fshuffle||!!(FS&&FS.shuffle)); return renderFlash() }
+  const d=ev.target.closest("[data-fdeck]");
+  if(d){ const k=d.dataset.fdeck;
+    if(k==="round"){ const order=FS.res.filter(r=>r.r==="again").map(r=>r.i); startFlash("round",true,order) }
+    else startFlash(k,!!d.dataset.fshuffle||!!(FS&&FS.shuffle&&FS.filter!=="round"));
+    renderFlash(); const w=$(".fc-wrap"); w&&w.scrollIntoView({block:"start"}); return }
+  const gt=ev.target.closest("[data-fc-goto]"); if(gt){ ev.preventDefault(); const g=document.getElementById(gt.getAttribute("href").slice(1)); if(g){ g.open=true; g.scrollIntoView({behavior:reduceMotion?"auto":"smooth",block:"start"}) } return }
+  const cc=ev.target.closest("[data-fc-concept]"); if(cc){ go("prep",{goal:"study",tab:"concepts",concept:+cc.dataset.fcConcept}); return }
   const b=ev.target.closest("[data-fc]"); if(b) return fcAct(b.dataset.fc);
   if(ev.target.closest("#fc")) fcAct("flip");
 });
 document.addEventListener("keydown", ev=>{
-  if(state.view!=="prep"||state.tab!=="flash"||$("#exam").open||/INPUT|SELECT|TEXTAREA/.test(ev.target.tagName)||ev.metaKey||ev.ctrlKey||ev.altKey) return;
+  if(state.view!=="prep"||state.tab!=="flash"||$("#exam").open||/INPUT|SELECT|TEXTAREA|SUMMARY|BUTTON|A/.test(ev.target.tagName)&&ev.target.id!=="fc"&&ev.key!=="ArrowLeft"&&ev.key!=="ArrowRight"||ev.metaKey||ev.ctrlKey||ev.altKey) return;
   if(ev.key===" "||ev.key==="Enter"&&ev.target.id==="fc"){ ev.preventDefault(); fcAct("flip") }
   else if(ev.key==="ArrowRight"){ ev.preventDefault(); fcAct("got") }
   else if(ev.key==="ArrowLeft"){ ev.preventDefault(); fcAct("again") }
