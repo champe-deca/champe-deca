@@ -938,6 +938,8 @@ a.ia-row:hover{border-color:var(--ink)}
   .resume-meter{margin-top:.35rem}
   .resume-act{margin-top:.3rem}
 }
+.tour-toast{border:1px solid color-mix(in srgb,var(--hero-fg) 22%,transparent)}
+.tour-pop{border:1px solid var(--rule);border-top:8px solid var(--hl)}
 </style>
 </head>
 <body>
@@ -2009,7 +2011,11 @@ document.addEventListener("click", ev=>{
   if(ev.target.closest("[data-tour-x]")) return tourEnd();
   if(TOUR&&ev.target.closest(".tour")&&!ev.target.closest(".tour-pop")) ev.stopPropagation();
 }, true);
-document.addEventListener("keydown", ev=>{ if(!TOUR) return; if(ev.key==="Escape") tourEnd(); if(ev.key==="ArrowRight"&&!/INPUT|SELECT|TEXTAREA/.test(ev.target.tagName)) tourShow(TOUR.n+1); if(ev.key==="ArrowLeft"&&TOUR.n) tourShow(TOUR.n-1) }, true);
+document.addEventListener("keydown", ev=>{ if(!TOUR) return;
+  // while the tour is open, its keys never reach the page underneath
+  if(/^(Escape|ArrowRight|ArrowLeft| |Enter)$/.test(ev.key)&&!ev.target.closest(".tour-pop button")) { ev.preventDefault(); ev.stopImmediatePropagation() }
+  else if(ev.key==="Escape"||ev.key.startsWith("Arrow")) ev.stopImmediatePropagation();
+  if(ev.key==="Escape") tourEnd(); else if(ev.key==="ArrowRight") tourShow(TOUR.n+1); else if(ev.key==="ArrowLeft"&&TOUR.n) tourShow(TOUR.n-1) }, true);
 setTimeout(()=>{ if(load(TKEY)||state.view!=="home"||TOUR) return;
   document.body.insertAdjacentHTML("beforeend",`<div id="tour-toast" class="tour-toast" role="status"><p><b>New here?</b> Take a one-minute tour of the site.</p><div><button class="btn" type="button" data-tour>Take the tour</button><button class="linkish" type="button" data-tour-x>No thanks</button></div></div>`);
 }, 1200);
