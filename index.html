@@ -770,6 +770,37 @@ dialog.exam::backdrop{background:rgba(10,16,38,.6)}
 .keyman{margin-top:2rem;border-top:1px solid var(--rule);padding-top:1rem}
 .keyman summary{cursor:pointer;font-family:var(--ui);font-weight:700;color:var(--ink-soft)}
 .gq i{white-space:nowrap}
+/* exam report */
+.report .rp-h{font-family:var(--display);font-weight:800;font-size:1.6rem;margin:2rem 0 .6rem}
+.focus{margin-top:1.2rem;background:color-mix(in srgb,var(--hl) 22%,var(--sheet));border-left:5px solid var(--hl);border-radius:0 10px 10px 0;padding:.7rem 1rem}
+.focus.repeat{background:color-mix(in srgb,#EF4444 12%,var(--sheet));border-left-color:#EF4444;margin-top:.6rem}
+.focus a{color:inherit;font-weight:700}
+code{font-family:ui-monospace,Menlo,monospace;font-size:.88em;background:color-mix(in srgb,var(--ink) 9%,transparent);padding:.05rem .35rem;border-radius:4px}
+.ia-rows{display:grid;gap:.4rem}
+.ia-row{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr) 4rem;gap:.8rem;align-items:center;padding:.45rem .7rem;border:1px solid var(--rule);border-radius:8px;background:var(--sheet);color:var(--ink);text-decoration:none}
+a.ia-row:hover{border-color:var(--ink)}
+.ia-row b{font-family:var(--ui);font-weight:700;font-size:1rem;line-height:1.2}
+.ia-row .meter{--mc:#22C55E;height:.6rem}
+.ia-row.weak .meter{--mc:#EF4444}
+.ia-row span{font-family:var(--ui);font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.ia-group{margin-top:.7rem;border:1px solid var(--rule);border-radius:12px;background:var(--sheet);overflow:hidden;scroll-margin-top:1rem}
+.ia-group > summary{cursor:pointer;display:flex;justify-content:space-between;gap:1rem;padding:.75rem 1rem;font-family:var(--ui);background:color-mix(in srgb,#EF4444 9%,var(--sheet))}
+.ia-group > summary b{font-size:1.15rem}
+.ia-group > summary span{font-weight:700;color:var(--ink-soft);white-space:nowrap}
+.miss-item{padding:.9rem 1rem;border-top:1px solid var(--rule)}
+.miss-item header{display:flex;flex-wrap:wrap;gap:.4rem .8rem;align-items:baseline;font-family:var(--ui)}
+.miss-item header b{font-family:var(--display);font-weight:900;font-size:1.35rem}
+.miss-item .ans s{color:#DC2626}
+.miss-item .ans strong{color:#16A34A}
+.miss-item .again{font-size:.8rem;font-weight:700;background:#EF4444;color:#fff;border-radius:999px;padding:.05rem .5rem}
+.miss-item .pi-t{font-family:var(--ui);font-weight:700;margin-top:.35rem}
+.miss-item .why{margin-top:.35rem;line-height:1.6;color:var(--ink-soft);font-size:1.02rem}
+.miss-item .linkish{margin-top:.5rem;display:inline-block}
+.report .hist{display:flex;flex-wrap:wrap;gap:.4rem}
+.weak-box{background:var(--sheet);border:1px solid var(--rule);border-left:6px solid var(--g);border-radius:0 12px 12px 0;padding:1rem 1.2rem;margin-bottom:1.5rem;max-width:52rem}
+.weak-box h3{font-size:1.7rem}
+.weak-box .note{margin:.2rem 0 .7rem}
+@media (max-width:600px){ .ia-row{grid-template-columns:minmax(0,1fr) 3.2rem} .ia-row .meter{grid-column:1/-1;grid-row:2} }
 </style>
 
 <header class="top">
@@ -1403,7 +1434,22 @@ function enhanceExams(){
     a.insertAdjacentHTML("beforebegin",`<button class="take" type="button" data-take="${i}">Take exam</button>`);
     a.insertAdjacentHTML("afterend",bestLine(e.code,a.href));
   });
+  const ia={}, mc={}; let n=0;
+  Object.values(pev(e.code).x).forEach(h=>h.forEach(at=>{ if(!at.ia) return; n++;
+    Object.entries(at.ia).forEach(([p,[r,t]])=>{ (ia[p] ||= [0,0]); ia[p][0]+=r; ia[p][1]+=t });
+    (at.mc||[]).forEach(c=>mc[c]=(mc[c]||0)+1) }));
+  if(!n) return;
+  const rows=Object.entries(ia).filter(([,[r,t]])=>t>=3).map(([p,[r,t]])=>({p,r,t})).sort((x,y)=>x.r/x.t-y.r/y.t).slice(0,5);
+  const rep=Object.entries(mc).filter(([,k])=>k>1).sort((x,y)=>y[1]-x[1]).slice(0,8);
+  const piIdx=c=>e.pis.findIndex(p=>p.code&&p.code.replace(/\s/g,"")===c);
+  $("#panel .panel-intro").insertAdjacentHTML("afterend",`<section class="weak-box">
+    <h3>Your weak areas</h3><p class="note">Across ${n} graded exam${n>1?"s":""}. Lowest scores first.</p>
+    <div class="ia-rows">${rows.map(x=>`<div class="ia-row ${x.r/x.t<.7?"weak":""}"><b>${esc(iaName(x.p))}</b>${meter(x.r/x.t)}<span>${Math.round(x.r/x.t*100)}%</span></div>`).join("")}</div>
+    ${rep.length?`<p class="note" style="margin-top:.9rem"><b>PIs you keep missing:</b> ${rep.map(([c,k])=>{ const i=piIdx(c); return i>=0?`<button class="linkish" type="button" data-pi-jump="${i}">${c}</button> (${k}×)`:`<code>${c}</code> (${k}×)` }).join(", ")}</p>`:""}
+  </section>`);
 }
+document.addEventListener("click", ev=>{ const j=ev.target.closest("[data-pi-jump]"); if(!j) return; const i=+j.dataset.piJump;
+  go("prep",{goal:"roleplay",tab:"pis",piGroup:"all",silent:true}); const d=document.querySelectorAll("#pi-list details.pi")[i]; if(d){ d.open=true; setTimeout(()=>d.scrollIntoView({behavior:reduceMotion?"auto":"smooth",block:"start"}),50) } });
 document.addEventListener("click", ev=>{ const t=ev.target.closest("[data-take]"); if(t) openExam(EXLIST[+t.dataset.take]) });
 function openExam(x){
   const e=E(), saved=load(XKEY);
@@ -1471,40 +1517,90 @@ function renderExam(){
     if(!XS.k&&!XS.keyTried) autoKey();
     return;
   }
-  // done
-  const last=(pev(XS.code).x[XS.url]||[]).slice(-1)[0]||{s:0,n:XS.n,m:[],sec:0}, hist=pev(XS.code).x[XS.url]||[];
-  D.innerHTML=`<div class="ex">${head("")}<div class="ex-scroll"><div class="ex-panel">
-    <h3>Saved to your ${esc(XS.code)} progress.</h3>
-    <div class="ex-score">${last.s}<small> / ${last.n} · ${Math.round(last.s/last.n*100)}%</small></div>
-    <p>Time used: ${fmtT(last.sec)}.</p>
-    ${last.m.length?`<p style="margin-top:1rem"><b>Missed (${last.m.length}):</b> look up each one in the answer key's rationale, then reread the matching concept in Study.</p><div class="missed">${last.m.map(q=>`<span>${q}${last.k&&last.k[q]?`: ${last.a&&last.a[q]||"blank"} → ${last.k[q]}`:""}</span>`).join("")}</div>`:"<p>Perfect score.</p>"}
-    ${hist.length>1?`<ol class="hist">${hist.map(h=>`<li>${new Date(h.t).toLocaleDateString()}: ${h.s}/${h.n} (${Math.round(h.s/h.n*100)}%)</li>`).join("")}</ol>`:""}
+  // done: the report
+  const hist=pev(XS.code).x[XS.url]||[], vi=XS.view!=null&&hist[XS.view]?XS.view:hist.length-1, at=hist[vi]||{s:0,n:XS.n,m:[],sec:0,t:Date.now()};
+  D.innerHTML=`<div class="ex">${head("")}<div class="ex-scroll"><div class="ex-panel report">
+    <h3>${vi===hist.length-1?`Saved to your ${esc(XS.code)} progress.`:`Report from ${new Date(at.t).toLocaleDateString()}`}</h3>
+    <div class="ex-score">${at.s}<small> / ${at.n} · ${Math.round(at.s/at.n*100)}%</small></div>
+    <p>Time used: ${fmtT(at.sec)}.${at.m.length?` You missed ${at.m.length}.`:" Perfect score."}</p>
+    <div id="x-report">${at.m.length||at.ia?`<p class="keynote">Building your report from the answer key…</p>`:""}</div>
+    ${hist.length>1?`<h4 class="rp-h">All your tries on this exam</h4><div class="hist">${hist.map((h,i)=>`<button type="button" class="chip" data-hist="${i}" aria-pressed="${i===vi}">${new Date(h.t).toLocaleDateString()} · ${h.s}/${h.n} (${Math.round(h.s/h.n*100)}%)</button>`).join("")}</div>`:""}
     <div class="actions"><button class="btn" type="button" data-x="close">Back to exams</button><button class="btn ghost" type="button" data-x="retake">Retake</button><button class="btn ghost" type="button" data-x="study">Study ${esc(XS.code)} concepts</button></div>
   </div></div></div>`;
+  if(at.m.length||at.ia) fillReport(at);
 }
-function applyKey(k,msg){
-  XS.k=k; XS.keyMsg=msg; XS.wrong=[]; for(let q=1;q<=XS.n;q++) if(!XS.ans[q]||(k[q]&&k[q]!==XS.ans[q])) XS.wrong.push(q); xsave(); renderExam();
-}
-const KKEY="champeDeca.keys.v1";
-async function pdfKey(url){
-  const cache=load(KKEY)||{}; if(cache[url]) return cache[url];
+/* ----- answer key + explanations from the PDF ----- */
+const IA_NAMES={BL:"Business Law",CO:"Communication Skills",CR:"Customer Relations",EC:"Economics",EI:"Emotional Intelligence",EN:"Entrepreneurship",FI:"Financial Analysis",FM:"Financial-Information Management",HR:"Human Resources Management",IM:"Marketing-Information Management",KM:"Knowledge Management",MK:"Marketing",MP:"Market Planning",NF:"Information Management",OP:"Operations",PD:"Professional Development",PI:"Pricing",PJ:"Project Management",PM:"Product/Service Management",PR:"Promotion",QM:"Quality Management",RM:"Risk Management",SE:"Selling",SM:"Strategic Management",CM:"Channel Management"};
+const iaName=p=>IA_NAMES[p]||`Other (${p})`;
+const KKEY="champeDeca.keys.v2";
+const clean=s=>s.replace(/\s+/g," ").replace(/ ([,.;:!?)])/g,"$1").trim();
+async function pdfEntries(url){
+  const cache=load(KKEY)||{}; if(cache[url]){ cache[url].ts=Date.now(); store(KKEY,cache); return cache[url].e }
   if(!window.pdfjsLib){ const m=await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs"); m.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs"; window.pdfjsLib=m }
   const doc=await pdfjsLib.getDocument({data:await (await fetch(url)).arrayBuffer()}).promise;
   const pages=[]; for(let i=1;i<=doc.numPages;i++){ const tc=await (await doc.getPage(i)).getTextContent(); pages.push(tc.items.map(t=>t.str+(t.hasEOL?"\n":" ")).join("")) }
   const first=/(?:^|\n)\s*1\s*\.\s*[A-D]\b/;
   let start=pages.findIndex(p=>/\bKEY\b/.test(p)&&first.test(p)); if(start<0) start=pages.findIndex(p=>first.test(p)); if(start<0) return null;
-  const key={}; let last=0;
-  for(const m of pages.slice(start).join("\n").matchAll(/(?:^|\n|\s)(\d{1,3})\s*\.\s*([A-D])(?=[\s.)]|$)/g)){ const n=+m[1]; if(n>last&&n<=last+3&&!(n in key)){ key[n]=m[2]; last=n } }
-  if(Object.keys(key).length<5) return null;
-  cache[url]=key; store(KKEY,cache); return key;
+  const txt=pages.slice(start).join("\n").replace(/Test\s+\d[\d ]*\s[^\n]*?KEY\s*\d*[ \t]*/g," ").replace(/Copyright\s*©[^\n]*?Ohio\.?/g," ");
+  const hits=[]; let last=0;
+  for(const m of txt.matchAll(/(?:^|\n|\s)(\d{1,3})\s*\.\s*([A-D])(?=[\s.)]|$)/g)){ const n=+m[1]; if(n>last&&n<=last+3&&!hits.some(h=>h.n===n)){ hits.push({n,L:m[2],i:m.index,end:m.index+m[0].length}); last=n } }
+  if(hits.length<5) return null;
+  const e={};
+  hits.forEach((h,j)=>{ const body=txt.slice(h.end, j+1<hits.length?hits[j+1].i:undefined), si=body.search(/SOURCE:/);
+    const why=clean(si<0?body:body.slice(0,si)), src=si<0?"":body.slice(si+7).split(/SOURCE:/)[0];
+    const cm=src.match(/([A-Z]{2,3}):\s?(\d{3})\s*(.*)/s);
+    e[h.n]={L:h.L, c:cm?cm[1]+":"+cm[2]:null, t:cm?clean(cm[3]).slice(0,160):"", w:why.slice(0,1400)} });
+  cache[url]={e,ts:Date.now()};
+  const urls=Object.keys(cache).sort((a,b)=>cache[b].ts-cache[a].ts); urls.slice(12).forEach(u=>delete cache[u]);
+  store(KKEY,cache); return e;
+}
+let XENT={url:null,e:null};
+async function entriesFor(url){ if(XENT.url===url&&XENT.e) return XENT.e; const e=await pdfEntries(url); if(e) XENT={url,e}; return e }
+function applyKey(k,msg){
+  XS.k=k; XS.keyMsg=msg; XS.wrong=[]; for(let q=1;q<=XS.n;q++) if(!XS.ans[q]||(k[q]&&k[q]!==XS.ans[q])) XS.wrong.push(q); xsave(); renderExam();
 }
 async function autoKey(){
   XS.keyTried=true; const url=XS.url, mine=XS;
-  let k=null; try{ k=await pdfKey(url) }catch(_){ k=null }
+  let e=null; try{ e=await entriesFor(url) }catch(_){ e=null }
   if(XS!==mine||XS.phase!=="grade"||XS.k) return;
-  if(!k){ XS.keyMsg="Couldn't read the key from this PDF automatically. Type it below or tap the ones you got wrong. Blank answers start out marked wrong."; xsave(); return renderExam() }
-  const have=Object.keys(k).filter(q=>+q<=XS.n).length, miss=[]; for(let q=1;q<=XS.n;q++) if(!k[q]) miss.push(q);
+  if(!e){ XS.keyMsg="Couldn't read the key from this PDF automatically. Type it below or tap the ones you got wrong. Blank answers start out marked wrong."; xsave(); return renderExam() }
+  const k=Object.fromEntries(Object.entries(e).map(([n,x])=>[n,x.L])), miss=[]; for(let q=1;q<=XS.n;q++) if(!k[q]) miss.push(q);
+  XS.autoKey=true;
   applyKey(k, miss.length? `Graded automatically from the key in the PDF. The key didn't list question${miss.length>1?"s":""} ${miss.slice(0,8).join(", ")}${miss.length>8?"…":""}, so check ${miss.length>1?"those":"that one"} by hand.` : "Graded automatically from the answer key in the PDF.");
+}
+function tally(at,e){
+  const ia={}, mc=[], missed=new Set(at.m);
+  for(let q=1;q<=at.n;q++){ const x=e&&e[q]; if(!x||!x.c) continue; const p=x.c.split(":")[0]; (ia[p] ||= [0,0])[1]++; if(missed.has(q)) mc.push(x.c); else ia[p][0]++ }
+  return {ia,mc};
+}
+async function fillReport(at){
+  const box=$("#x-report"), url=XS.url, code=XS.code, ev=EVENTS[byCode[code]];
+  let e=null; try{ e=await entriesFor(url) }catch(_){}
+  if(!box.isConnected) return;
+  const key=q=>at.k&&at.k[q-1]&&at.k[q-1]!=="-"?at.k[q-1]:e&&e[q]?e[q].L:null, mine=q=>at.a&&at.a[q-1]&&at.a[q-1]!=="-"?at.a[q-1]:null;
+  if(!e){ box.innerHTML=`<p class="keynote">The detailed report needs the answer key from the PDF, and this one couldn't be read automatically. Look up each miss in the key's rationale.</p><div class="missed">${at.m.map(q=>`<span>${q}${key(q)?`: ${mine(q)||"blank"} → ${key(q)}`:""}</span>`).join("")}</div>`; return }
+  const {ia,mc}=at.ia?at:tally(at,e);
+  // repeats: PIs missed here that were also missed on other graded exams for this event
+  const prev={}; Object.entries(pev(code).x).forEach(([u,h])=>h.forEach(a=>{ if(a===at||!a.mc) return; a.mc.forEach(c=>{ (prev[c] ||= []).push(a.t) }) }));
+  const rows=Object.entries(ia).map(([p,[r,t]])=>({p,r,t,miss:t-r})).sort((a,b)=>b.miss-a.miss||a.r/a.t-b.r/b.t);
+  const focus=rows.filter(x=>x.miss>=2||x.miss&&x.r/x.t<.7).slice(0,3);
+  const piIdx=c=>ev?ev.pis.findIndex(p=>p.code&&p.code.replace(/\s/g,"")===c):-1;
+  const groups={}; at.m.forEach(q=>{ const x=e[q], p=x&&x.c?x.c.split(":")[0]:"?"; (groups[p] ||= []).push(q) });
+  const gOrder=Object.keys(groups).sort((a,b)=>groups[b].length-groups[a].length);
+  const repeats=[...new Set(mc)].filter(c=>prev[c]);
+  box.innerHTML=`
+    ${focus.length?`<div class="focus"><b>Focus next:</b> ${focus.map(x=>`<a href="#ia-${x.p}">${esc(iaName(x.p))}</a> (missed ${x.miss} of ${x.t})`).join(", ")}.</div>`:""}
+    ${repeats.length?`<div class="focus repeat"><b>Missed again:</b> you've missed ${repeats.length===1?"this PI":"these PIs"} on an earlier exam too. ${repeats.map(c=>`<code>${c}</code>`).join(" ")}</div>`:""}
+    ${rows.length?`<h4 class="rp-h">Score by instructional area</h4><div class="ia-rows">${rows.map(x=>`<a class="ia-row ${x.r/x.t<.7?"weak":""}" href="#ia-${x.p}"><b>${esc(iaName(x.p))}</b>${meter(x.r/x.t)}<span>${x.r}/${x.t}</span></a>`).join("")}</div>`:""}
+    ${at.m.length?`<h4 class="rp-h">What you missed and why</h4><p class="note">DECA's explanation for each question you missed, grouped by area. Read the why, not just the letter.</p>
+    ${gOrder.map((p,gi)=>`<details class="ia-group" id="ia-${p}" ${gi<2?"open":""}><summary><b>${p==="?"?"Unlabeled":esc(iaName(p))}</b><span>${groups[p].length} missed</span></summary>
+      ${groups[p].map(q=>{ const x=e[q]||{}, pi=x.c?piIdx(x.c):-1; return `<article class="miss-item">
+        <header><b>Q${q}</b><span class="ans">You: <s>${mine(q)||"blank"}</s> → Key: <strong>${key(q)||"?"}</strong></span>${x.c?`<code>${x.c}</code>`:""}${x.c&&prev[x.c]?`<span class="again">missed before</span>`:""}</header>
+        ${x.t?`<p class="pi-t">${esc(x.t)}</p>`:""}
+        ${x.w?`<p class="why">${esc(x.w)}</p>`:""}
+        ${pi>=0?`<button class="linkish" type="button" data-open-pi="${pi}">Read your judge-ready response for ${x.c}</button>`:""}
+      </article>`}).join("")}
+    </details>`).join("")}`:""}`;
 }
 function parseKey(txt){
   const out={}; let m, numbered=false;
@@ -1519,6 +1615,11 @@ $("#exam").addEventListener("click", ev=>{
   if(q){ const n=+q.dataset.q, L=q.dataset.l; XS.ans[n]===L?delete XS.ans[n]:XS.ans[n]=L; xsave();
     q.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",XS.ans[n]===b.dataset.l));
     const a=answered(); $("#x-count").textContent=`${a}/${XS.n}`; $(".ex-count .meter i").style.width=Math.round(a/XS.n*100)+"%"; return }
+  const hv=ev.target.closest("[data-hist]"); if(hv){ XS.view=+hv.dataset.hist; xsave(); renderExam(); $("#exam .ex-scroll").scrollTop=0; return }
+  const op=ev.target.closest("[data-open-pi]");
+  if(op){ const code=XS.code, i=+op.dataset.openPi; store(XKEY,null); closeExam(); go("prep",{ev:byCode[code],goal:"roleplay",tab:"pis",piGroup:"all",silent:true});
+    const d=document.querySelectorAll("#pi-list details.pi")[i]; if(d){ d.open=true; setTimeout(()=>d.scrollIntoView({behavior:reduceMotion?"auto":"smooth",block:"start"}),50) } return }
+  const ia=ev.target.closest('a[href^="#ia-"]'); if(ia){ ev.preventDefault(); const g=document.getElementById(ia.getAttribute("href").slice(1)); if(g){ g.open=true; g.scrollIntoView({behavior:reduceMotion?"auto":"smooth",block:"start"}) } return }
   const g=ev.target.closest("[data-g]");
   if(g){ const n=+g.dataset.g, w=new Set(XS.wrong); w.has(n)?w.delete(n):w.add(n); XS.wrong=[...w]; xsave();
     g.classList.toggle("wrong",w.has(n)); g.setAttribute("aria-pressed",w.has(n)); $("#x-live").textContent=`${XS.n-w.size}/${XS.n} right`; return }
@@ -1531,10 +1632,13 @@ $("#exam").addEventListener("click", ev=>{
   if(x==="back"){ if(XS.paused){ XS.start+=Date.now()-XS.paused; XS.paused=null } XS.phase="take"; xsave(); return renderExam() }
   if(x==="key"){ XS.key=$("#x-key").value; const k=parseKey(XS.key), have=Object.keys(k).filter(q=>+q<=XS.n).length;
     if(!have){ $("#x-keynote").textContent="I couldn't find any A–D answers in that."; return }
-    applyKey(k, have<XS.n?`Graded from the key you typed. It covers ${have} of ${XS.n} questions, so check the rest by hand.`:"Graded from the key you typed."); return }
-  if(x==="save"){ const o=pev(XS.code); (o.x[XS.url] ||= []).push({t:Date.now(), s:XS.n-XS.wrong.length, n:XS.n, m:[...XS.wrong].sort((a,b)=>a-b), sec:Math.round(elapsed()), ...(XS.k?{k:Object.fromEntries(XS.wrong.map(q=>[q,XS.k[q]])),a:Object.fromEntries(XS.wrong.map(q=>[q,XS.ans[q]]))}:{})}); psave();
+    XS.autoKey=false; applyKey(k, have<XS.n?`Graded from the key you typed. It covers ${have} of ${XS.n} questions, so check the rest by hand.`:"Graded from the key you typed."); return }
+  if(x==="save"){ const o=pev(XS.code), str=f=>Array.from({length:XS.n},(_,i)=>f(i+1)||"-").join("");
+    const at={t:Date.now(), s:XS.n-XS.wrong.length, n:XS.n, m:[...XS.wrong].sort((a,b)=>a-b), sec:Math.round(elapsed()), a:str(q=>XS.ans[q]), ...(XS.k?{k:str(q=>XS.k[q])}:{})};
+    if(XS.autoKey&&XENT.url===XS.url) Object.assign(at,tally(at,XENT.e));
+    (o.x[XS.url] ||= []).push(at); psave(); XS.view=null;
     XS.phase="done"; xsave(); return renderExam() }
-  if(x==="retake"){ XS.phase="setup"; XS.ans={}; XS.wrong=[]; XS.key=""; XS.k=null; XS.keyTried=false; XS.keyMsg=""; xsave(); return renderExam() }
+  if(x==="retake"){ XS.phase="setup"; XS.ans={}; XS.wrong=[]; XS.key=""; XS.k=null; XS.keyTried=false; XS.keyMsg=""; XS.autoKey=false; XS.view=null; xsave(); return renderExam() }
   if(x==="study"){ store(XKEY,null); closeExam(); go("prep",{ev:byCode[XS.code],goal:"study",tab:"concepts",concept:0}) }
 });
 
