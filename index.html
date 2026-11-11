@@ -1532,8 +1532,8 @@ function renderExam(){
 /* ----- answer key + explanations from the PDF ----- */
 const IA_NAMES={BL:"Business Law",CO:"Communication Skills",CR:"Customer Relations",EC:"Economics",EI:"Emotional Intelligence",EN:"Entrepreneurship",FI:"Financial Analysis",FM:"Financial-Information Management",HR:"Human Resources Management",IM:"Marketing-Information Management",KM:"Knowledge Management",MK:"Marketing",MP:"Market Planning",NF:"Information Management",OP:"Operations",PD:"Professional Development",PI:"Pricing",PJ:"Project Management",PM:"Product/Service Management",PR:"Promotion",QM:"Quality Management",RM:"Risk Management",SE:"Selling",SM:"Strategic Management",CM:"Channel Management"};
 const iaName=p=>IA_NAMES[p]||`Other (${p})`;
-const KKEY="champeDeca.keys.v2";
-const clean=s=>s.replace(/\s+/g," ").replace(/ ([,.;:!?)])/g,"$1").trim();
+const KKEY="champeDeca.keys.v3";
+const clean=s=>s.replace(/\s+/g," ").replace(/ ([,.;:!?)])/g,"$1").replace(/(\w) - (?=\w)/g,"$1-").trim();
 async function pdfEntries(url){
   const cache=load(KKEY)||{}; if(cache[url]){ cache[url].ts=Date.now(); store(KKEY,cache); return cache[url].e }
   if(!window.pdfjsLib){ const m=await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs"); m.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs"; window.pdfjsLib=m }
