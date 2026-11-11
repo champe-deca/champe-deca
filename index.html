@@ -832,6 +832,112 @@ a.ia-row:hover{border-color:var(--ink)}
 .fc-end.report .ex-score{font-size:clamp(3rem,9vw,5rem)}
 .fc-end.report .rp-h{font-family:var(--display);font-weight:800;font-size:1.6rem;margin:2rem 0 .6rem}
 .fc-end.report .actions{margin-top:2rem}
+
+/* ===== v10: navigation, progress page, shortcuts, tour, polish ===== */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.btn{border-radius:8px;transition:transform .15s var(--ease),filter .15s var(--ease)}
+.btn:active{transform:translateY(1px)}
+/* header */
+.top{background:color-mix(in srgb,var(--paper) 88%,transparent);-webkit-backdrop-filter:saturate(1.4) blur(10px);backdrop-filter:saturate(1.4) blur(10px)}
+.top .wrap{flex-wrap:nowrap;padding-block:.65rem}
+.top .steps{display:none!important}
+.brand{white-space:nowrap}
+.mainnav{display:flex;gap:.25rem;align-items:center}
+.nv{all:unset;box-sizing:border-box;cursor:pointer;font-family:var(--ui);font-weight:700;font-size:1.08rem;color:var(--ink-soft);padding:.4rem .7rem;border-radius:8px;white-space:nowrap}
+.nv:hover{color:var(--ink);background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.nv[aria-current="page"]{color:var(--ink);background:linear-gradient(transparent 58%,var(--hl) 58% 90%,transparent 90%)}
+.nv[data-nv="tour"]{border:1.5px solid var(--rule);margin-left:.35rem}
+.nv:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+/* phone tab bar */
+.tabbar{display:none}
+@media (max-width:700px){
+  .mainnav{display:none}
+  .tabbar{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--sheet) 94%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid var(--rule);padding:.35rem .25rem calc(.35rem + env(safe-area-inset-bottom,0px))}
+  .tabbar button{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.15rem;font-family:var(--ui);font-weight:700;font-size:.78rem;color:var(--ink-soft);padding:.2rem 0}
+  .tabbar svg{width:1.55rem;height:1.55rem;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;padding:.2rem .7rem;border-radius:999px;box-sizing:content-box}
+  .tabbar button[aria-current="page"]{color:var(--ink)}
+  .tabbar button[aria-current="page"] svg{background:var(--hl);color:var(--hl-ink)}
+  .tabbar button:focus-visible svg{outline:3px solid var(--hl)}
+  body{padding-bottom:4.6rem}
+  footer .wrap{padding-bottom:1rem}
+}
+/* resume card */
+.prog-home{padding-block:2.5rem 0}
+.resume{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:1.5rem;align-items:center;background:var(--sheet);border:1px solid var(--rule);border-left:8px solid var(--c);border-radius:14px;padding:1.1rem 1.4rem;box-shadow:var(--shadow)}
+.resume-code{font-family:var(--display);font-weight:900;font-size:clamp(3.2rem,7vw,4.6rem);line-height:.85;color:var(--c);letter-spacing:.01em}
+.resume-k{font-family:var(--ui);font-weight:700;color:var(--ink-soft);font-size:1rem}
+.resume-where{font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1.1;margin-top:.15rem}
+.resume-where span{font-family:var(--ui);font-weight:700;font-size:1.05rem;color:var(--ink-soft);margin-left:.35rem;white-space:nowrap}
+.resume-meter{display:flex;gap:.7rem;align-items:center;margin-top:.55rem;font-family:var(--ui);font-weight:700;font-size:.95rem;color:var(--ink-soft)}
+.resume-meter .meter{flex:1;max-width:18rem;height:.55rem}
+.resume-act{display:flex;flex-direction:column;align-items:flex-end;gap:.5rem}
+@media (max-width:700px){ .resume{grid-template-columns:auto minmax(0,1fr)} .resume-act{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between} }
+/* goal page */
+.goal-tools h2{font-size:1.6rem;margin:0 0 .7rem}
+.goal-tools h2.or{margin:2rem 0 .8rem;color:var(--ink-soft)}
+.tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(12.5rem,1fr));gap:.6rem}
+.tool{all:unset;box-sizing:border-box;cursor:pointer;font-family:var(--ui);font-weight:700;font-size:1rem;background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:.45rem .8rem;color:var(--ink)}
+.tool.big{display:flex;flex-direction:column;gap:.2rem;padding:.85rem 1rem;border-left:6px solid var(--g);transition:transform .15s var(--ease),box-shadow .15s var(--ease)}
+.tool.big b{font-size:1.15rem}
+.tool.big span{font-weight:500;font-size:.95rem;color:var(--ink-soft)}
+.tool:hover{border-color:var(--ink)}
+.tool.big:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.tool:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+.goal{padding:1.1rem 1.3rem 1.2rem}
+.goal .verb{font-size:clamp(2.2rem,3.6vw,3rem)}
+.goal ul{margin-top:.6rem}
+.goal .go-line{padding-top:1rem}
+/* event switcher */
+.evswitch select{font:inherit;font-family:var(--ui);font-weight:700;font-size:1.05rem;color:var(--ink);background:var(--sheet);border:1.5px solid var(--rule);border-radius:8px;padding:.3rem 2rem .3rem .6rem;max-width:100%;cursor:pointer;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-position:calc(100% - 15px) 55%,calc(100% - 10px) 55%;background-size:5px 5px;background-repeat:no-repeat}
+.evswitch select:hover{border-color:var(--ink)}
+/* progress page */
+.pv-list{display:grid;gap:1rem;padding-bottom:1rem}
+.pv{background:var(--sheet);border:1px solid var(--rule);border-left:8px solid var(--c);border-radius:14px;padding:1.1rem 1.3rem}
+.pv header{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:1rem;align-items:center}
+.pv header > b{font-family:var(--display);font-weight:900;font-size:2.8rem;line-height:.85;color:var(--c)}
+.pv header h2{font-size:1.4rem;margin-bottom:.4rem}
+.pv header .meter{height:.6rem}
+.pv-pct{font-family:var(--display);font-weight:900;font-size:2rem}
+.pv .prog{margin-top:1rem}
+.pv-weak{margin-top:.8rem;font-size:1rem;color:var(--ink-soft)}
+.pv-tools{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.9rem}
+.pv-foot{color:var(--ink-soft);font-size:1rem;padding:1rem 0 3rem}
+.empty{background:var(--sheet);border:1px dashed var(--rule);border-radius:14px;padding:clamp(1.25rem,4vw,2.2rem);max-width:44rem;margin-bottom:3rem}
+.empty h2{font-size:2rem}
+.empty p{margin-top:.5rem;color:var(--ink-soft)}
+/* tour */
+.tour{position:fixed;inset:0;z-index:60}
+.tour-spot{position:fixed;border-radius:12px;box-shadow:0 0 0 3px var(--hl),0 0 0 9999px rgba(8,14,36,.62);transition:all .3s var(--ease);pointer-events:none}
+.tour-pop{position:fixed;width:min(23rem,calc(100vw - 24px));background:var(--sheet);color:var(--ink);border-radius:14px;border-top:8px solid var(--hl);box-shadow:0 20px 50px -12px rgba(0,0,0,.5);padding:1rem 1.15rem 1rem;transition:top .3s var(--ease),left .3s var(--ease)}
+.tour-n{font-family:var(--ui);font-weight:700;font-size:.92rem;color:var(--ink-soft)}
+.tour-pop h2{font-size:1.75rem;margin:.15rem 0 .4rem}
+.tour-pop > p:not(.tour-n){font-size:1.02rem;line-height:1.55}
+.tour-act{display:flex;align-items:center;gap:.5rem;margin-top:1rem}
+.tour-act span{flex:1}
+.tour-act .btn{font-size:1rem;padding:.45rem .9rem}
+.tour-toast{position:fixed;right:16px;bottom:16px;z-index:40;max-width:22rem;background:var(--hero-bg);color:var(--hero-fg);border-radius:14px;padding:1rem 1.1rem;box-shadow:0 18px 40px -12px rgba(0,0,0,.5);animation:fade-up .4s var(--ease)}
+.tour-toast p{margin-bottom:.7rem;line-height:1.45}
+.tour-toast div{display:flex;gap:.8rem;align-items:center}
+.tour-toast .btn{background:var(--hl);color:var(--hl-ink);border-color:var(--hl)}
+.tour-toast .linkish{color:var(--hero-soft)}
+@media (max-width:700px){ .tour-toast{left:12px;right:12px;bottom:calc(5rem + env(safe-area-inset-bottom,0px));max-width:none} }
+@media (prefers-reduced-motion:reduce){ .tour-spot,.tour-pop{transition:none} }
+.prog-home.prog-top{padding-block:1.25rem 1.25rem}
+.prog-top .resume{box-shadow:none}
+.prep-head > div:first-child{min-width:0;max-width:100%}
+.evswitch{display:inline-block;max-width:100%}
+.evswitch select{width:auto;max-width:100%;text-overflow:ellipsis}
+@media (max-width:700px){ .evswitch,.evswitch select{width:100%} }
+@media (max-width:700px){
+  .prog-home.prog-top{padding-block:.9rem .9rem}
+  .resume{gap:.4rem .9rem;padding:.8rem .95rem}
+  .resume-code{font-size:2.6rem}
+  .resume-where{font-size:1.2rem}
+  .resume-where span{display:block;margin:.1rem 0 0}
+  .resume-k{font-size:.9rem}
+  .resume-meter{margin-top:.35rem}
+  .resume-act{margin-top:.3rem}
+}
 </style>
 </head>
 <body>
@@ -917,6 +1023,14 @@ a.ia-row:hover{border-color:var(--ink)}
     </div>
   </section>
 
+  <section data-view="progress" hidden>
+    <div class="wrap">
+      <div class="crumbs"><button class="linkish" type="button" data-nav="home">Home</button></div>
+      <div class="view-head"><h1 tabindex="-1">My progress</h1><p>Everything you've marked, flipped and graded, saved on this device.</p></div>
+      <div id="progview"></div>
+    </div>
+  </section>
+
   <section data-view="event" hidden>
     <div class="wrap">
       <div class="crumbs"><button class="linkish" type="button" data-nav="home">Home</button></div>
@@ -939,6 +1053,7 @@ a.ia-row:hover{border-color:var(--ink)}
         <p>Pick what you're working on today. You can switch any time.</p>
       </div>
       <div class="goal-prog" id="goal-prog"></div>
+      <div class="goal-tools" id="goal-tools"></div>
       <div class="goals" id="goals"></div>
     </div>
   </section>
@@ -1025,7 +1140,7 @@ function tabsFor(e, goal){
 /* ---------- navigation ---------- */
 function setHash(){
   const v=state.view;
-  const h = v==="home" ? "" : v==="fresh" ? "freshman-"+(state.ftab||"snapshot") : v==="event" ? "events" : v==="goal" ? E().code.toLowerCase() : [E().code.toLowerCase(), state.goal, state.tab].join("-");
+  const h = v==="home" ? "" : v==="progress" ? "progress" : v==="fresh" ? "freshman-"+(state.ftab||"snapshot") : v==="event" ? "events" : v==="goal" ? E().code.toLowerCase() : [E().code.toLowerCase(), state.goal, state.tab].join("-");
   try{ history.replaceState(null,"", h ? "#"+h : location.pathname) }catch(_){}
 }
 function go(view, opts={}){
@@ -1036,6 +1151,7 @@ function go(view, opts={}){
     if(view==="goal") renderGoal();
     if(view==="prep") renderPrep();
     if(view==="home") renderHomeProgress();
+    if(view==="progress") renderProgressView();
     if(view==="fresh") renderFresh();
     renderSteps(); setHash();
     if(!opts.silent){ window.scrollTo(0,0); const h=document.querySelector(`[data-view="${view}"] h1`); h && h.focus({preventScroll:true}) }
@@ -1379,27 +1495,27 @@ function progHTML(e){
   </dl>`;
 }
 function renderHomeProgress(){
-  const box=$("#prog-home");
-  const started=EVENTS.filter(e=>{ const s=evStats(e); return s.c||s.p||s.k||s.tries });
   document.querySelectorAll("#quick .tile").forEach(t=>{ const e=EVENTS[+t.dataset.ev], s=evStats(e);
     let bar=t.querySelector(".tile-p"); if(!s.pct){ bar&&bar.remove(); return }
     if(!bar){ bar=document.createElement("span"); bar.className="tile-p"; bar.innerHTML="<i></i>"; t.appendChild(bar) }
     bar.firstChild.style.width=s.pct+"%"; t.title=`${s.pct}% done`; });
-  if(!started.length){ box.hidden=true; return }
+  const box=$("#prog-home"), L=load(LKEY);
+  const e=L&&EVENTS[L.ev]&&EVENTS[L.ev].code===L.code?EVENTS[L.ev]:null;
+  if(!e){ box.hidden=true; return }
+  const s=evStats(e), g=GOALS.find(x=>x.id===L.goal), tab=(tabsFor(e,L.goal).find(t=>t.id===L.tab)||{}).label||"";
   box.hidden=false;
-  box.innerHTML=`<div class="prog-home-in">
-    <h2>Your progress</h2>
-    <p class="lead">Saved on this device. Concepts you mark done, PIs you can say, flashcards you know, and your exam scores.</p>
-    <div class="prog-rows">${started.map(e=>{ const s=evStats(e);
-      return `<button class="prog-row" type="button" data-prog-ev="${byCode[e.code]}" style="--c:${cvar(e.code)}"><b>${e.code}</b>
-        <div>${meter(s.pct/100)}<em>${s.c}/${s.nc} concepts · ${s.p}/${s.np} PIs · ${s.k}/${s.nk} cards${s.tries?` · best exam ${Math.round(s.best*100)}%`:""}</em></div>
-        <span>${s.pct}%</span></button>` }).join("")}</div>
-    <div class="prog-reset"><button class="linkish" type="button" id="prog-reset">Reset all progress</button></div>
+  box.innerHTML=`<div class="resume" style="--c:${cvar(e.code)}">
+    <div class="resume-code">${e.code}</div>
+    <div class="resume-body"><p class="resume-k">Pick up where you left off</p>
+      <p class="resume-where">${esc(e.name)}${g?` <span>${esc(g.verb)}${tab?" / "+esc(tab):""}</span>`:""}</p>
+      <div class="resume-meter">${meter(s.pct/100,cvar(e.code))}<span>${s.pct}% done</span></div></div>
+    <div class="resume-act"><button class="btn" type="button" data-resume>Continue</button><button class="linkish" type="button" data-nav="progress">See all progress</button></div>
   </div>`;
 }
+const LKEY="champeDeca.last.v1";
 document.addEventListener("click", ev=>{
   const r=ev.target.closest("[data-prog-ev]"); if(r){ go("goal",{ev:+r.dataset.progEv}); return }
-  if(ev.target.closest("#prog-reset")){ if(confirm("Erase all saved progress, flashcards and exam scores on this device?")){ PROG={}; psave(); store(XKEY,null); renderHomeProgress() } return }
+  if(ev.target.closest("#prog-reset")){ if(confirm("Erase all saved progress, flashcards and exam scores on this device?")){ PROG={}; psave(); store(XKEY,null); store(LKEY,null); state.view==="progress"?renderProgressView():renderHomeProgress() } return }
   const c=ev.target.closest("[data-cdone]");
   if(c){ const e=E(), i=+c.dataset.cdone, on=ptoggle(pev(e.code).c,i);
     c.setAttribute("aria-pressed",on); c.textContent=on?"✓ Done":"Mark this concept done";
@@ -1780,10 +1896,131 @@ if(typeof FRESH!=="undefined" && $("#groups")){
   document.addEventListener("click", ev=>{ const o=ev.target.closest("[data-fresh-open]"); if(o) go("fresh",{ftab:o.dataset.freshOpen}) });
 }
 
+/* ---------- v10: navigation, progress page, shortcuts, tour ---------- */
+(function(){
+  const ICON={
+    home:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+    events:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>',
+    fresh:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg>',
+    progress:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg>',
+    tour:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>'
+  };
+  const hasFresh=typeof FRESH!=="undefined";
+  const items=[["home","Home",'data-nav="home"'],["events","Events",'data-nav="event"'],hasFresh&&["fresh","Freshman",'data-fresh-open="snapshot"'],["progress","My progress",'data-nav="progress"'],["tour","Tour","data-tour"]].filter(Boolean);
+  const top=$(".top .wrap");
+  top.insertAdjacentHTML("beforeend",`<nav class="mainnav" aria-label="Main">${items.filter(i=>i[0]!=="home").map(([k,l,a])=>`<button type="button" class="nv" data-nv="${k}" ${a}>${l}</button>`).join("")}</nav>`);
+  document.body.insertAdjacentHTML("beforeend",`<nav class="tabbar" aria-label="Main">${items.map(([k,l,a])=>`<button type="button" data-nv="${k}" ${a}>${ICON[k]}<span>${l==="My progress"?"Progress":l}</span></button>`).join("")}</nav>`);
+  window.markNav=function(){
+    const v=state.view, k=v==="home"?"home":v==="progress"?"progress":v==="fresh"?"fresh":"events";
+    document.querySelectorAll("[data-nv]").forEach(b=>b.dataset.nv===k?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current"));
+  };
+})();
+// remember last place + highlight nav
+const _setHash=setHash;
+setHash=function(){ _setHash(); try{ markNav() }catch(_){}
+  if(state.view==="prep") store(LKEY,{ev:state.ev,code:E().code,goal:state.goal,tab:state.tab,t:Date.now()}); };
+document.addEventListener("click", ev=>{ if(ev.target.closest("[data-resume]")){ const L=load(LKEY); if(L) go("prep",{ev:L.ev,goal:L.goal,tab:L.tab}) } });
+
+/* My progress page */
+function renderProgressView(){
+  const box=$("#progview"); if(!box) return;
+  const rows=EVENTS.map(e=>({e,s:evStats(e)})), started=rows.filter(r=>r.s.c||r.s.p||r.s.k||r.s.tries).sort((a,b)=>b.s.pct-a.s.pct);
+  if(!started.length){ box.innerHTML=`<div class="empty"><h2>Nothing tracked yet.</h2><p>Progress fills in as you mark concepts done, mark PIs you can say, sort flashcards and grade practice exams. It's saved on this device.</p><div class="actions"><button class="btn" type="button" data-nav="event">Choose your event</button><button class="btn ghost" type="button" data-tour>Take the tour</button></div></div>`; return }
+  box.innerHTML=`<div class="pv-list">${started.map(({e,s})=>{
+    const ia={}; Object.values(pev(e.code).x).forEach(h=>h.forEach(a=>Object.entries(a.ia||{}).forEach(([p,[r,t]])=>{ (ia[p] ||= [0,0]); ia[p][0]+=r; ia[p][1]+=t })));
+    const weak=Object.entries(ia).filter(([,[r,t]])=>t>=3).map(([p,[r,t]])=>({p,f:r/t})).sort((a,b)=>a.f-b.f).slice(0,3);
+    return `<article class="pv" style="--c:${cvar(e.code)}">
+      <header><b>${e.code}</b><div><h2>${esc(e.name)}</h2>${meter(s.pct/100,cvar(e.code))}</div><span class="pv-pct">${s.pct}%</span></header>
+      ${progHTML(e)}
+      ${weak.length?`<p class="pv-weak"><b>Weakest exam areas:</b> ${weak.map(w=>`${esc(iaName(w.p))} (${Math.round(w.f*100)}%)`).join(", ")}</p>`:""}
+      <div class="pv-tools">
+        <button class="tool" type="button" data-tool="study.flash" data-tool-ev="${byCode[e.code]}">Flashcards</button>
+        <button class="tool" type="button" data-tool="test.exams" data-tool-ev="${byCode[e.code]}">Practice exams</button>
+        <button class="tool" type="button" data-tool="roleplay.pis" data-tool-ev="${byCode[e.code]}">PI responses</button>
+        <button class="tool" type="button" data-tool="study.concepts" data-tool-ev="${byCode[e.code]}">Concepts</button>
+      </div></article>` }).join("")}</div>
+    <p class="pv-foot">Saved on this device only. <button class="linkish" type="button" id="prog-reset">Reset all progress</button></p>`;
+}
+
+/* one-tap tools on the goal page */
+function toolsHTML(e,i){
+  const t=[["study.flash","Flashcards",`${cardsFor(e).length} cards`],["test.exams","Take a practice exam",`${e.nExams||"Past"} exams, graded for you`],["roleplay.pis","PI responses",`${e.pis.length} judge-ready answers`],["study.concepts","Core concepts",`${e.concepts.length} concepts`],["roleplay.clock","Practice clock","10 + 10 minutes"]];
+  return t.map(([k,l,d])=>`<button class="tool big" type="button" data-tool="${k}" data-tool-ev="${i}" style="--g:var(--g-${k.split(".")[0]})"><b>${l}</b><span>${d}</span></button>`).join("");
+}
+const _renderGoal=renderGoal;
+renderGoal=function(){ _renderGoal(); const e=E(), box=$("#goal-tools"); if(box) box.innerHTML=`<h2>Jump straight to a tool</h2><div class="tools">${toolsHTML(e,state.ev)}</div><h2 class="or">Or pick what you're working on</h2>` };
+document.addEventListener("click", ev=>{ const t=ev.target.closest("[data-tool]"); if(!t) return; const [goal,tab]=t.dataset.tool.split("."); go("prep",{ev:+t.dataset.toolEv,goal,tab,concept:0,piGroup:"all"}) });
+
+/* switch event without leaving the page */
+const _renderPrep=renderPrep;
+renderPrep=function(){ _renderPrep();
+  const sub=$("#prep-sub"); if(!sub) return;
+  sub.innerHTML=`<label class="evswitch"><span class="sr">Switch event</span><select id="evswitch">${EVENTS.map((e,i)=>`<option value="${i}" ${i===state.ev?"selected":""}>${e.code} · ${esc(e.name)}</option>`).join("")}</select></label>`;
+  $("#evswitch").onchange=ev=>go("prep",{ev:+ev.target.value,tab:state.tab,concept:0,piGroup:"all",silent:true});
+};
+
+/* ---------- guided tour ---------- */
+const TKEY="champeDeca.tour.v1";
+let TOUR=null;
+function tourSteps(){
+  const i=Number.isInteger(state.ev)?state.ev:0, code=EVENTS[i].code, mob=matchMedia("(max-width:700px)").matches;
+  return [
+    {go:()=>go("home",{silent:true}), el:"#quick", t:"Start with your event", d:"Tap your event's code to jump straight in. Every guide is split the same way, so once you learn one you know them all."},
+    {go:()=>go("home",{silent:true}), el:mob?".tabbar":".mainnav", t:"Get around from anywhere", d:"Events lists every guide by cluster. Freshman has VA Job Interview and VA Selling. My progress shows everything you've done. Tour brings you back here."},
+    {go:()=>go("goal",{ev:i,silent:true}), el:"#goal-tools .tools", t:"One tap to the tools", d:`Each event page has shortcuts to the things you'll use most: flashcards, practice exams, PI responses, concepts and the practice clock.`},
+    {go:()=>go("prep",{ev:i,goal:"study",tab:"flash",silent:true}), el:".fc", t:"Flashcards", d:"Say the answer out loud, then flip. Mark Got it or Still learning. When you finish a round you get a report on what you missed, with the full answers."},
+    {go:()=>go("prep",{ev:i,goal:"test",tab:"exams",silent:true}), el:"[data-take]", t:"Take a real practice exam", d:"Take exam opens DECA's official exam next to an answer sheet with a timer. It's graded from the answer key, and the report breaks your score down by instructional area."},
+    {go:()=>go("prep",{ev:i,goal:"roleplay",tab:"pis",silent:true}), el:"details.pi", t:"Practice PI responses", d:"Open a PI, read the judge-ready response, then say it in your own words. Mark the ones you can say so you know what's left."},
+    {go:()=>go("prep",{ev:i,goal:"study",tab:"flash",silent:true}), el:"#evswitch", t:"Switch events anytime", d:`You're looking at ${code}. Pick another event here and you stay on the same tool.`},
+    {go:()=>go("progress",{silent:true}), el:"#progview", t:"Track your progress", d:"Everything you mark, flip and grade shows up here, saved on this device. Weak exam areas show up so you know what to study next."}
+  ];
+}
+function tourShow(n){
+  const steps=tourSteps(); if(n<0||n>=steps.length) return tourEnd();
+  TOUR={n,steps}; const s=steps[n]; s.go();
+  setTimeout(()=>{
+    const el=document.querySelector(s.el); const ov=$("#tour");
+    if(el){ el.scrollIntoView({block:"center",behavior:"instant"}) }
+    ov.hidden=false;
+    ov.innerHTML=`<div class="tour-spot"></div><div class="tour-pop" role="dialog" aria-modal="true" aria-labelledby="tour-t">
+      <p class="tour-n">${n+1} of ${steps.length}</p><h2 id="tour-t">${s.t}</h2><p>${s.d}</p>
+      <div class="tour-act"><button class="linkish" type="button" data-tour-x>Skip tour</button><span></span>${n?`<button class="btn ghost" type="button" data-tour-go="${n-1}">Back</button>`:""}<button class="btn" type="button" data-tour-go="${n+1}">${n===steps.length-1?"Finish":"Next"}</button></div></div>`;
+    tourPlace(); ov.querySelector(`[data-tour-go="${n+1}"]`).focus({preventScroll:true});
+  }, reduceMotion?60:380);
+}
+function tourPlace(){
+  if(!TOUR) return; const s=TOUR.steps[TOUR.n], el=document.querySelector(s.el), spot=$(".tour-spot"), pop=$(".tour-pop"); if(!spot||!pop) return;
+  const vw=innerWidth, vh=innerHeight;
+  if(!el){ spot.style.cssText="opacity:0"; pop.style.cssText=`left:${Math.max(12,(vw-pop.offsetWidth)/2)}px;top:${Math.max(12,(vh-pop.offsetHeight)/2)}px`; return }
+  let r=el.getBoundingClientRect(); const pad=8;
+  const R={l:Math.max(4,r.left-pad),t:Math.max(4,r.top-pad),w:Math.min(vw-8,r.width+pad*2),h:Math.min(vh*.6,r.height+pad*2)};
+  spot.style.cssText=`left:${R.l}px;top:${R.t}px;width:${R.w}px;height:${R.h}px`;
+  const pw=pop.offsetWidth, ph=pop.offsetHeight, below=R.t+R.h+12, above=R.t-ph-12;
+  let y = below+ph<vh-8 ? below : above>8 ? above : Math.max(8,vh-ph-8);
+  let x = Math.min(Math.max(12,R.l), vw-pw-12);
+  pop.style.cssText=`left:${x}px;top:${y}px`;
+}
+function tourEnd(){ TOUR=null; const ov=$("#tour"); ov.hidden=true; ov.innerHTML=""; store(TKEY,{seen:1}); const t=$("#tour-toast"); t&&t.remove() }
+document.body.insertAdjacentHTML("beforeend",`<div id="tour" class="tour" hidden></div>`);
+addEventListener("resize",tourPlace); addEventListener("scroll",tourPlace,{passive:true});
+document.addEventListener("click", ev=>{
+  if(ev.target.closest("[data-tour]")){ $("#tour-toast")&&$("#tour-toast").remove(); return tourShow(0) }
+  const g=ev.target.closest("[data-tour-go]"); if(g) return tourShow(+g.dataset.tourGo);
+  if(ev.target.closest("[data-tour-x]")) return tourEnd();
+  if(TOUR&&ev.target.closest(".tour")&&!ev.target.closest(".tour-pop")) ev.stopPropagation();
+}, true);
+document.addEventListener("keydown", ev=>{ if(!TOUR) return; if(ev.key==="Escape") tourEnd(); if(ev.key==="ArrowRight"&&!/INPUT|SELECT|TEXTAREA/.test(ev.target.tagName)) tourShow(TOUR.n+1); if(ev.key==="ArrowLeft"&&TOUR.n) tourShow(TOUR.n-1) }, true);
+setTimeout(()=>{ if(load(TKEY)||state.view!=="home"||TOUR) return;
+  document.body.insertAdjacentHTML("beforeend",`<div id="tour-toast" class="tour-toast" role="status"><p><b>New here?</b> Take a one-minute tour of the site.</p><div><button class="btn" type="button" data-tour>Take the tour</button><button class="linkish" type="button" data-tour-x>No thanks</button></div></div>`);
+}, 1200);
+// put "pick up where you left off" at the top of the home page
+(function(){ const box=$("#prog-home"), home=document.querySelector('[data-view="home"]'); if(box&&home){ home.prepend(box); box.classList.add("prog-top") } })();
+
 /* ---------- boot ---------- */
 (function boot(){
   const h=location.hash.slice(1);
   if(h==="events") return go("event",{silent:true});
+  if(h==="progress") return go("progress",{silent:true});
   if(h.startsWith("freshman")) return go("fresh",{ftab:h.split("-")[1]||"snapshot",silent:true});
   const [code,goal,tab]=h.split("-");
   const i=EVENTS.findIndex(e=>e.code.toLowerCase()===code);
