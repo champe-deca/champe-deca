@@ -1693,6 +1693,37 @@ $("#exam").addEventListener("click", ev=>{
   if(x==="study"){ store(XKEY,null); closeExam(); go("prep",{ev:byCode[XS.code],goal:"study",tab:"concepts",concept:0}) }
 });
 
+/* ---------- freshman events in the event picker ---------- */
+if(typeof FRESH!=="undefined" && $("#groups")){
+  const FR=[{code:"VA-JI", tab:"interview", name:"VA Job Interview", pts:85, what:"The judge plays a hiring manager. You get a job situation and a job application, then interview for the job: first impression, your answers, questions for the employer, and the close."},
+            {code:"VA-SEL", tab:"selling", name:"VA Selling", pts:60, what:"The judge plays a customer shopping for a product. You get a store situation and a product information sheet, then sell using the Seven Steps of Selling."}];
+  $("#groups").insertAdjacentHTML("beforeend",`
+  <div>
+    <div class="group-label" style="--c:var(--cl-fresh)"><i></i>Virginia Freshman<span>Freshmen only, VA events</span></div>
+    <div class="codes" role="tablist" aria-label="Virginia Freshman" style="--c:var(--cl-fresh)">
+      ${FR.map(f=>`<button class="code" type="button" role="tab" data-fresh-ev="${f.code}" aria-selected="false" title="${esc(f.name)}">${f.code}</button>`).join("")}
+    </div>
+  </div>`);
+  $("#groups").addEventListener("click", ev=>{
+    const b=ev.target.closest("[data-fresh-ev]");
+    if(!b){ if(ev.target.closest("[data-ev]")) document.querySelectorAll("[data-fresh-ev]").forEach(x=>x.setAttribute("aria-selected","false")); return }
+    const f=FR.find(x=>x.code===b.dataset.freshEv);
+    document.querySelectorAll("#groups .code").forEach(x=>x.setAttribute("aria-selected", x===b));
+    const s=$("#spec"); s.style.setProperty("--c","var(--cl-fresh)"); replay(s);
+    s.innerHTML=`
+      <p class="cluster"><span class="chip-c">Virginia Freshman</span></p>
+      <h2>${esc(f.name)}</h2>
+      <p class="about">${esc(f.what)} Virginia-only, for freshmen. It starts at DLC, and winners move on to SLC. No exam.</p>
+      <dl class="facts">
+        <div><dt>Prep time</dt><dd>10 min</dd></div>
+        <div><dt>With the judge</dt><dd>10 min</dd></div>
+        <div><dt>Total points</dt><dd>${f.pts}</dd></div>
+      </dl>
+      <div class="actions"><button class="btn" type="button" data-fresh-open="${f.tab}">Open the ${esc(f.name)} guide</button><button class="btn ghost" type="button" data-fresh-open="snapshot">Freshman event overview</button></div>`;
+  });
+  document.addEventListener("click", ev=>{ const o=ev.target.closest("[data-fresh-open]"); if(o) go("fresh",{ftab:o.dataset.freshOpen}) });
+}
+
 /* ---------- boot ---------- */
 (function boot(){
   const h=location.hash.slice(1);
